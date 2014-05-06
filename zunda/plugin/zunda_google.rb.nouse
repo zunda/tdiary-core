@@ -1,0 +1,31 @@
+def adsense( align = 'right' )
+	if not @conf.bot? and not @zunda_google_done and not @conf.mobile_agent? and ( @mode == 'latest' or @mode == 'month' or ( @mode == 'day' and @diaries[@date.strftime('%Y%m%d')] ) ) then
+		@zunda_google_done = true
+		<<"_END"
+<div style="text-align: #{align};">
+<script type="text/javascript"><!--
+google_ad_client = "pub-1753707470530275";
+google_alternate_ad_url = "http://zunda.freeshell.org/tool/zundad.html";
+google_ad_width = 468;
+google_ad_height = 60;
+google_ad_format = "468x60_as";
+google_ad_channel ="";
+google_color_border = "80B020";
+google_color_bg = "D8E0E0";
+google_color_link = "FFAA00";
+google_color_url = "D88000";
+google_color_text = "006020";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+_END
+	else
+		''
+	end
+end
+
+add_body_leave_proc do
+	adsense
+end
