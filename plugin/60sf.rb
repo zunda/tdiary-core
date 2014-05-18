@@ -124,7 +124,7 @@ if sf_option( 'selected' ) && !@sf_filters then
 	@sf_filters = []
 	sf_option( 'selected' ).untaint.split( /\n/ ).collect{ |p| File.basename( p ) }.sort.each do |filename|
 		@sf_path.each do |dir|
-			path = "#{dir}/#{filename}"
+			path = File.expand_path( "#{dir}/#{filename}" )
 			if File.readable?( path ) then
 				begin
 					require path
