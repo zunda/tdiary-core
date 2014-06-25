@@ -124,10 +124,10 @@ if sf_option( 'selected' ) && !@sf_filters then
 	@sf_filters = []
 	sf_option( 'selected' ).untaint.split( /\n/ ).collect{ |p| File.basename( p ) }.sort.each do |filename|
 		@sf_path.each do |dir|
-			path = File.expand_path( "#{dir}/#{filename}" )
+			path = "#{dir}/#{filename}"
 			if File.readable?( path ) then
 				begin
-					require path
+					require File.expand_path( path )
 					@sf_filters << TDiary::Filter::const_get("#{File::basename(filename, ".rb").capitalize}Filter")::new(@cgi, @conf)
 					plugin_path = "#{dir}/plugin/#{filename}"
 					load_plugin(plugin_path) if File.readable?(plugin_path)
