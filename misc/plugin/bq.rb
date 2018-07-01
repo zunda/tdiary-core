@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # bq.rb
 #
 # bq: blockquoteを使った引用を生成する
@@ -17,7 +16,7 @@
 #       }
 #
 # Copyright (C) 2002 s.sawada <moonwave@ba2.so-net.ne.jp>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 def bq( src, title = nil, url = nil )
 	if url

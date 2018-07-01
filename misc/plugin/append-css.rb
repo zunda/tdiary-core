@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # append-css.rb
 #
 # Append CSS fragment via Preferences Page.
 #
 # Copyright (c) 2002 TADA Tadashi <sho@spc.gr.jp>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 add_header_proc do
 	if @mode !~ /conf$/ && @conf['append-css.css'] && @conf['append-css.css'].length > 0 && !bot?

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # calendar3.rb
 #
 # calendar3: 現在表示している月のカレンダーを表示します．
@@ -15,7 +14,7 @@
 #     省略時の値はtrueなので，表示したくない場合のみfalseを設定する．
 #
 # Copyright (c) 2001,2002 Junichiro KITA <kita@kitaj.no-ip.com>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 #
 # sample CSS for calendar3

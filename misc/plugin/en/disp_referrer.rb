@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 =begin
 = A little bit more powerful display of referrers((-$Id: disp_referrer.rb,v 1.20 2008-03-02 09:01:46 kazuhiko Exp $-))
 English resource
@@ -10,8 +9,7 @@ Please note that some methods in this plugin are written by other
 authors as written in the comments.
 
 Permission is granted for use, copying, modification, distribution, and
-distribution of modified versions of this work under the terms of GPL
-version 2 or later.
+distribution of modified versions of this work under the terms of GPL version 2 or later.
 =end
 
 =begin ChangeLog
@@ -56,32 +54,20 @@ See ../ChangeLog for changes after this.
 =end
 
 # Message strings
-Disp_referrer2_name = 'Referrer classification'.taint
-Disp_referrer2_abstract = <<'_END'.taint
+Disp_referrer2_name = 'Referrer classification'
+Disp_referrer2_abstract = <<'_END'
 <p>
 	This plugin distinguishes the URLs from antennas and search engines
 	and shows them separately. Search keywords from different engines are
 	compound together.
 </p>
 _END
-Disp_referrer2_with_Nora = <<'_END'.taint
-<p>
-	Pages are displayed a little bit faster with the Nora library.
-</p>
-_END
-Disp_referrer2_without_Nora = <<'_END'.taint
-<!-- p>
-	Please install the
-	<a href="http://www.moonwolf.com/ruby/archive/nora-20040830.tar.gz">Nora
-	library</a> if you feel the pages show too slowly.
-</p -->
-_END
-Disp_referrer2_cache_info = <<'_END'.taint
+Disp_referrer2_cache_info = <<'_END'
 <p>
 	Total size of the caches is %1$s byte(s).
 </p>
 _END
-Disp_referrer2_update_info = <<'_END'.taint
+Disp_referrer2_update_info = <<'_END'
 <p>
 	Please clear the cache by checking this box:
   <label for="dr2.cache.update"><input id="dr2.cache.update" name="dr2.cache.update" value="force" type="checkbox">clear the cache</label>,
@@ -89,20 +75,20 @@ Disp_referrer2_update_info = <<'_END'.taint
 	after editing the <a href="%1$s">today's link</a> lists.
 </p>
 _END
-Disp_referrer2_move_to_refererlist = <<'_END'.taint
+Disp_referrer2_move_to_refererlist = <<'_END'
 	<a href="%s">Follow this link</a> to edit the referer lists.
 _END
-Disp_referrer2_move_to_config = <<'_END'.taint
+Disp_referrer2_move_to_config = <<'_END'
 	<a href="%s">Follow this link</a> to configure the plug-in.
 _END
-Disp_referrer2_also_todayslink = <<'_END'.taint
+Disp_referrer2_also_todayslink = <<'_END'
 	Referer list can also be edited via &quot;<a href="%s">Today's link</a>&quot;.
 _END
-Disp_referrer2_antenna_label = 'Antennae'.taint
-Disp_referrer2_unknown_label = 'Others'.taint
-Disp_referrer2_search_label = 'Search engines'.taint
-Disp_referrer2_search_unknown_keyword = 'Unknown keyword'.taint
-Disp_referrer2_cache_label = '(cache from %s)'.taint
+Disp_referrer2_antenna_label = 'Antennae'
+Disp_referrer2_unknown_label = 'Others'
+Disp_referrer2_search_label = 'Search engines'
+Disp_referrer2_search_unknown_keyword = 'Unknown keyword'
+Disp_referrer2_cache_label = '(cache from %s)'
 
 class DispRef2SetupIF
 
@@ -164,7 +150,6 @@ class DispRef2SetupIF
 				the search engine names.
 			</table>
 		_HTML
-		unless @setup.secure then
 		r << <<-_HTML
 			<h3>Cache</h3>
 			<p>It isn't available to turn on this option with tDiary2 file format(DefaultIO).</p>
@@ -184,19 +169,14 @@ class DispRef2SetupIF
 			</table>
 			<p>Cache size limit is an approximation. There is a chance that the cache size is bigger than the configured value. Setting the limit to zero disalbes limitation. K or M can be suffixed meaning Kbytes or Mbytes.</p>
 		_HTML
-		end # unless @setup.secure
 		r
 	end
 
 	# shows URL list to be added to the referer_table or no_referer
 	def show_unknown_list
-		if @setup.secure then
+		urls = DispRef2Cache.new( @setup ).urls( DispRef2URL::Unknown ).keys
+		if urls.size == 0 then
 			urls = DispRef2Latest.new( @cgi, 'latest.rhtml', @conf, @setup ).unknown_urls
-		else
-			urls = DispRef2Cache.new( @setup ).urls( DispRef2URL::Unknown ).keys
-			if urls.size == 0 then
-				urls = DispRef2Latest.new( @cgi, 'latest.rhtml', @conf, @setup ).unknown_urls
-			end
 		end
 		urls.reject!{ |url| DispRef2String::url_match?( url, @setup['reflist.ignore_urls'] ) }
 		r = <<-_HTML

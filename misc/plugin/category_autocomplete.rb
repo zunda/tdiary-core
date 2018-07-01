@@ -1,18 +1,17 @@
-# -*- coding: utf-8 -*-
 #
 # category_autocomplete.rb : Support the automatic input of the category
 #                            using jQuery UI autocomplete.
 #
 # Copyright (C) 2010-2012, tamoot <tamoot+tdiary@gmail.com>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 
-if !@cgi.mobile_agent? && /\A(?:form|preview|append|edit|update)\z/ =~ @mode
+if /\A(?:form|preview|append|edit|update)\z/ =~ @mode
 	add_header_proc do
-		%Q|<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css"/>|
+		%Q|<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css"/>|
 	end
 
-	enable_js('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js')
+	enable_js('//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js')
 	enable_js('caretposition.js')
 	enable_js('category_autocomplete.js')
 

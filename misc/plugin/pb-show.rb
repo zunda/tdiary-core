@@ -12,15 +12,12 @@
 #		If true, hide 'Pingbacks(n)' when there is no Pingbacks.  Default value is false.
 #
 # Copyright (c) 2003 TADA Tadashi <sho@spc.gr.jp>
-# You can distribute this file under the GPL.
+# You can distribute this file under the GPL2 or any later version.
 #
 # Modified: by Junichiro Kita <kita@kitaj.no-ip.com>
 # Modified: by MoonWolf <moonwolf@moonwolf.com>
 #
 #
-
-# running on only non mobile mode
-unless @cgi.mobile_agent? then
 
 #
 # hide Pingbacks in TSUKKOMI
@@ -127,9 +124,6 @@ def pingbacks_of_today_long( diary, limit = 100 )
 	r << %Q!\t</div>\n!
 	r
 end
-
-# running on only non mobile mode
-end # unless mobile_agent?
 
 #
 # show Pingback ping URL

@@ -1,9 +1,8 @@
-# -*- coding: utf-8; -*-
 #
 # limitdays.rb:
 #
 # Copyright (C) SHIBATA Hiroshi <shibata.hiroshi@gmail.com> 2008.
-# Distributed under GPL2.
+# Distributed under GPL2 or any later version.
 #
 
 module TDiary::Filter

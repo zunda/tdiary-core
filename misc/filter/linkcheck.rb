@@ -1,4 +1,3 @@
-# -*- coding: utf-8; -*-
 #
 # linkcheck.rb: tDiary filter for checking link to my site in TrackBack source site.
 #
@@ -8,7 +7,7 @@
 #    * no response over 10 sec, it's mybe spam.
 #
 # Copyright (C) 2007 by TADA Tadashi <sho@spc.gr.jp>
-# Distributed under GPL2.
+# Distributed under GPL2 or any later version.
 #
 
 require 'open-uri'

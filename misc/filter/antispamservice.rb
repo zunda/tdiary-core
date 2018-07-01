@@ -1,4 +1,3 @@
-# -*- coding: utf-8; -*-
 #
 # antispamservice.rb: tDiary comment spam filter using Antispam API $Revision: 1.4 $
 #
@@ -11,7 +10,7 @@
 #
 # Copyright (C) TADA Tadashi <sho@spc.gr.jp> 2007.
 # Modified by SHIBATA Hiroshi <shibata.hiroshi@gmail.com> 2008.
-# Distributed under GPL2.
+# Distributed under GPL2 or any later version.
 #
 
 require 'net/http'

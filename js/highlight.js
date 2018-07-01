@@ -4,7 +4,7 @@
  * Copyright (C) 2003 by Ryuji SAKAI
  * Copyright (C) 2003 by Kazuhiro NISHIYAMA
  * Copyright (C) 2011 by MATSUOKA Kohei <kmachu@gmail.com>
- * You can distribute it under GPL.
+ * You can distribute it under GPL2 or any later version.
  */
 
 $(function() {
@@ -14,7 +14,7 @@ $(function() {
 
     // change document title
     var target = $(anchor).parent();
-    if (target.filter('h3').size() > 0) {
+    if (target.filter('h3').length > 0) {
       document.title = target.children("a").attr("title") + " - " + $tDiary.title;
     }
 
@@ -26,7 +26,7 @@ $(function() {
     .filter(function() {
       return $(this).attr("name").match(/^[pc]/);
     })
-    .bind("click", function() {
+    .on("click", function() {
       highlight(this);
     })
 

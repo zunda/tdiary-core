@@ -1,34 +1,29 @@
 source 'https://rubygems.org'
 
-gem 'rack'
-gem 'sprockets'
+gem 'rack', '~> 2.0' # ~> 2.0 requires ruby 2.2.2 or later.
 gem 'hikidoc'
 gem 'fastimage'
+gem 'emot'
+gem 'mail'
+gem 'rake'
 
-group :coffee do
-  gem 'coffee-script'
-  gem 'therubyracer'
-end
-
-group :server do
-  platforms :mri do
-    gem 'thin'
-  end
-
-  platforms :jruby do
-    gem 'trinidad'
-  end
+group :rack do
+  gem 'sprockets'
 end
 
 group :development do
   gem 'pit', require: false
   gem 'racksh', require: false
-  gem 'rake'
-  gem 'octorelease'
   gem 'redcarpet'
+  gem 'octokit'
+
+  platforms :ruby_23, :ruby_24 do
+    gem 'ruby-debug-ide'
+    gem 'debase'
+  end
 
   group :test do
-    gem 'pry-byebug'
+    gem 'pry-byebug', platforms: [:ruby_23, :ruby_24]
     gem 'test-unit'
     gem 'rspec'
     gem 'capybara', require: 'capybara/rspec'
@@ -36,7 +31,7 @@ group :development do
     gem 'launchy'
     gem 'sequel'
     gem 'sqlite3'
-    gem 'jasmine'
+    gem 'jasmine', '< 3'
     gem 'simplecov', require: false
     gem 'coveralls', require: false
   end

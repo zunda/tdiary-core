@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # footnote.rb
 #
 # fn: 脚注plugin
@@ -7,7 +6,7 @@
 #     mark: 脚注マーク('*')
 #
 # Copyright (C) 2007 TADA Tadashi <sho@spc.gr.jp>
-# Distributed under the GPL.
+# Distributed under the GPL2 or any later version.
 
 # initialize variables
 @fn_fragment_fm = ''

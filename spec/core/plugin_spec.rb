@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 require File.dirname(__FILE__) + "/../plugin/plugin_helper"
@@ -42,24 +41,17 @@ describe TDiary::Plugin do
 			@src = ERB::new('hello <%= sample %><%= undefined_method %>').src
 			@plugin.instance_variable_set(:@debug, false)
 		end
-		subject { @plugin.eval_src(@src, false) }
+		subject { @plugin.eval_src(@src) }
 
 		it 'Pluginオブジェクト内でソースが実行されること' do
 			is_expected.to eq 'hello sample plugin'
-		end
-
-		context 'secureモード指定の場合' do
-			it 'Safeモード4で実行されること' do
-				expect(Safe).to receive(:safe).with(4)
-				@plugin.eval_src(@src, true)
-			end
 		end
 
 		context 'debugモードがONの場合' do
 			before { @plugin.instance_variable_set(:@debug, true) }
 
 			it 'Plugin内のエラーが通知されること' do
-				expect { subject }.to raise_error
+				expect { subject }.to raise_error(NameError)
 			end
 		end
 	end
@@ -376,7 +368,20 @@ describe TDiary::Plugin do
 
 		context 'keyに相当するブロックが存在しない場合' do
 			subject { @plugin.__send__(:content_proc, 'unregistered_key', date) }
-			it { expect { subject }.to raise_error }
+			it { expect { subject }.to raise_error(TDiary::PluginError) }
+		end
+	end
+
+	describe '#startup_proc' do
+		let (:proc) { lambda { "some plugin" } }
+		let (:app) { lambda { "tdiary application" } }
+		before do
+			@plugin.__send__(:add_startup_proc, &proc)
+		end
+
+		it 'add_startup_procで登録したブロックが実行されること' do
+			expect(proc).to receive(:call).with(app)
+			@plugin.__send__(:startup_proc, app)
 		end
 	end
 end

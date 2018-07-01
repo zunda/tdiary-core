@@ -1,8 +1,7 @@
-# coding: utf-8
 require 'acceptance_helper'
 
 feature 'プラグイン選択設定の利用' do
-	plugin_path = "#{TDiary::PATH}/misc/plugin/rspec.rb"
+	plugin_path = "#{TDiary.root}/misc/plugin/rspec.rb"
 
 	scenario '新入荷のプラグインが表示される' do
 		FileUtils.rm plugin_path if File.exist? plugin_path
@@ -56,8 +55,8 @@ feature 'プラグイン選択設定の利用' do
 
 		expect(page.body).to be_include('caretposition.js')
 		expect(page.body).to be_include('category_autocomplete.js')
-		expect(page.body).to be_include('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js')
-		expect(page.body).not_to be_include('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js?')
+		expect(page.body).to be_include('//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js')
+		expect(page.body).not_to be_include('//ajax.googleapis.com/ajax/libs/jqueryui/1.12/1/jquery-ui.min.js?')
 	end
 end
 # Local Variables:

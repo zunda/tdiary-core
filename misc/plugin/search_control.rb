@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 =begin
 = ここだけ検索プラグイン/search control plugin((-$Id: search_control.rb,v 1.11 2008-03-02 09:01:45 kazuhiko Exp $-))
 
@@ -8,8 +7,7 @@ Under revision! TODO: add/remove user agents
 Copyright (C) 2003, 2004 zunda <zunda at freeshell.org>
 
 Permission is granted for use, copying, modification, distribution, and
-distribution of modified versions of this work under the terms of GPL
-version 2 or later.
+distribution of modified versions of this work under the terms of GPL version 2 or later.
 =end
 
 =begin ChangeLog

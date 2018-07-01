@@ -7,10 +7,9 @@
 #                NISHIMURA Takashi <nt at be.to>
 #
 # Permission is granted for use, copying, modification, distribution,
-# and distribution of modified versions of this work under the terms
-# of GPL version 2.
+# and distribution of modified versions of this work under the terms of GPL version 2 or later.
 #
-# Language resources can be found in the middle of thie file.
+# Language resources can be found in the middle of this file.
 # Please search a line with `language resource'
 #
 require 'pstore'
@@ -102,15 +101,15 @@ _END
 		end
 
 		# returns an HTML sniplet for configuration interface
-		def html(restore_default_label, mobile = false)
+		def html(restore_default_label)
 			return @default_hash.keys.sort_by{|k| @default_hash[k][:index]}.map{|k|
-				idattr = mobile ? '' : %Q| id="#{h k.to_s}"|
-				idattr_reset = mobile ? '' : %Q| id="#{h k.to_s}.reset"|
-				uncheck = mobile ? '' : ' onfocus="uncheck(this)"'
-				restore = mobile ? '' : ' onchange="restore(this)" onclick="restore(this)"'
+				idattr = %Q| id="#{h k.to_s}"|
+				idattr_reset = %Q| id="#{h k.to_s}.reset"|
+				uncheck = ' onfocus="uncheck(this)"'
+				restore = ' onchange="restore(this)" onclick="restore(this)"'
 				r = %Q|\t<h3 class="subtitle">#{h @default_hash[k][:title]}</h3>\n|
 				description = @default_hash[k][:description]
-				r += %Q|\t<p>#{h description}</p>\n| if description and not mobile
+				r += %Q|\t<p>#{h description}</p>\n| if description
 				unless @default_hash[k][:textarea]
 					r += %Q|\t<p><input name="#{h k.to_s}"#{idattr} type="text" value="#{h(Conf.to_native(self[k]))}"#{uncheck}>|
 				else
@@ -207,7 +206,7 @@ _END
 		unless hash.has_key?(key)
 			hash[key] = Array.new
 			begin
-				hash[key].taint
+				hash[key]
 			rescue SecurityError
 			end
 		end
@@ -216,10 +215,10 @@ _END
 	end
 
 	def initialize(cache_path)
-		@link_srcs = Hash.new.taint	# key:dst anchor value:Array of src anchors
-		@current_dsts = Hash.new.taint	# key:src anchor value:Array of dst anchors
-		@cached_dsts = Hash.new.taint	# for restore_dsts and clean_srcs
-		@vanished_dsts = Hash.new.taint	# key:src date value:Array of dst anchors
+		@link_srcs = Hash.new	# key:dst anchor value:Array of src anchors
+		@current_dsts = Hash.new	# key:src anchor value:Array of dst anchors
+		@cached_dsts = Hash.new	# for restore_dsts and clean_srcs
+		@vanished_dsts = Hash.new	# key:src date value:Array of dst anchors
 		@cache_path = cache_path
 	end
 
@@ -257,7 +256,7 @@ _END
 			next unless MySequel.date(src_anchor) == datestr
 			@current_dsts[src_anchor] = Array.new
 			begin
-				@current_dsts[src_anchor].taint
+				@current_dsts[src_anchor]
 			rescue SecurityError
 			end
 		end
@@ -312,9 +311,9 @@ _END
 			unless @srcs_loaded[cache_key] then
 				each_cached(cache_key, 'src') do |anchor, array|
 					unless @link_srcs.has_key?(anchor)
-						@link_srcs[anchor] = array.taint
+						@link_srcs[anchor] = array
 					else
-						@link_srcs[anchor] += array.taint
+						@link_srcs[anchor] += array
 					end
 				end
 				@srcs_loaded[cache_key] = true
@@ -328,7 +327,6 @@ _END
 		MySequel.each_cache_key(dates) do |cache_key|
 			unless @dsts_loaded[cache_key] then
 				each_cached(cache_key, 'dst') do |anchor, array|
-					array.taint
 					@cached_dsts[anchor] = array
 					@current_dsts[anchor] = array.dup
 				end
@@ -388,7 +386,7 @@ _END
 
 		store(hash_for_cache(@link_srcs, 'src'))
 		store(hash_for_cache(@current_dsts, 'dst'))
-		@vanished_dsts = Hash.new.taint
+		@vanished_dsts = Hash.new
 	end
 
 end
@@ -444,7 +442,7 @@ _END
 #{@my_sequel_conf.handler_block}
 <h3>#{@my_sequel_plugin_name}</h3>
 #{@my_sequel_description}
-#{@my_sequel_conf.html(@my_sequel_restore_default_label, @cgi.mobile_agent?).chomp}
+#{@my_sequel_conf.html(@my_sequel_restore_default_label).chomp}
 _HTML
 	end
 
@@ -454,7 +452,7 @@ _HTML
 	# activate this plugin if header procs are called
 	# - This avoids being called from makerss.rb
 	add_header_proc do
-		if not bot? and not @cgi.mobile_agent? then
+		unless bot?
 			@my_sequel_active = true
 			@my_sequel.restore(@diaries.keys)
 			MySequel.css(@my_sequel_conf[:inner_css])
@@ -498,7 +496,7 @@ _HTML
 	# show sequels when leaving a section
 	add_section_leave_proc do
 		r = ''
-		if @my_sequel_active and @my_sequel_date and @my_sequel_anchor and not bot? and not @cgi.mobile_agent? then
+		if @my_sequel_active and @my_sequel_date and @my_sequel_anchor and not bot? then
 			r = @my_sequel.html(@my_sequel_anchor, @my_sequel_conf[:date_format], @my_sequel_conf[:label]){|src_anchor, anchor_str|
 				my_sequel_orig_my(src_anchor, anchor_str)
 			}
@@ -511,7 +509,7 @@ _HTML
 	add_body_leave_proc do
 		r = ''
 		if @my_sequel_active and @my_sequel_date then
-			if not bot? and not @cgi.mobile_agent? then
+			unless bot?
 				r = @my_sequel.html(@my_sequel_anchor, @my_sequel_conf[:date_format], @my_sequel_conf[:label]){|src_anchor, anchor_str|
 					my_sequel_orig_my(src_anchor, anchor_str)
 				}

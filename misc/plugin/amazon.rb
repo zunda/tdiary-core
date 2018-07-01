@@ -3,13 +3,13 @@
 # see document: #{@lang}/amazon.rb
 #
 # Copyright (C) 2005-2007 TADA Tadashi <sho@spc.gr.jp>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 
-autoload :Net,     'net/http'
-autoload :URI,     'uri'
-autoload :Timeout, 'timeout'
-autoload :REXML,   'rexml/document'
+require 'net/http'
+require 'uri'
+require 'timeout'
+require 'rexml/document'
 
 # do not change these variables
 @amazon_subscription_id = '1CVA98NEF1G753PFESR2'
@@ -39,11 +39,48 @@ autoload :REXML,   'rexml/document'
   'us' => 'http://rpaproxy.tdiary.org/rpaproxy/us/',
 }
 
+enable_js( 'amazon.js' )
+
 if @conf['amazon.bitly'] and @conf['bitly.login'] and @conf['bitly.key'] then
-	enable_js( 'amazon.js' )
+	enable_js( 'amazon_bitly.js' )
 	add_js_setting( '$tDiary.plugin.bitly' )
 	add_js_setting( '$tDiary.plugin.bitly.login', "'#{@conf['bitly.login']}'" )
 	add_js_setting( '$tDiary.plugin.bitly.apiKey', "'#{@conf['bitly.key']}'" )
+end
+
+class AmazonRedirectError < StandardError; end
+
+class AmazonItem
+	def initialize(xml, parser = :rexml)
+		@parser = parser
+		if parser == :oga
+			@doc = Oga.parse_xml(xml)
+			@item = @doc.xpath('*/*/Item')[0]
+		else
+			@doc = REXML::Document::new( REXML::Source::new( xml ) ).root
+			@item = @doc.elements.to_a( '*/Item' )[0]
+		end
+	end
+
+	def nodes(path)
+		if @parser == :oga
+			if @item
+				@item.xpath(path)
+			else
+				@doc.xpath(path)
+			end
+		else
+			if @item
+				@item.elements.to_a(path)
+			else
+				@doc.elements.to_a(path)
+			end
+		end
+	end
+
+	def has_item?
+		!@item.nil?
+	end
 end
 
 def amazon_fetch( url, limit = 10 )
@@ -56,7 +93,9 @@ def amazon_fetch( url, limit = 10 )
 	when Net::HTTPSuccess
 		res.body
 	when Net::HTTPRedirection
-		amazon_fetch( res['location'].untaint, limit - 1 )
+		amazon_fetch( res['location'], limit - 1 )
+	when Net::HTTPForbidden, Net::HTTPServiceUnavailable
+		raise AmazonRedirectError.new( limit.to_s )
 	else
 		raise ArgumentError, res.error!
 	end
@@ -78,11 +117,16 @@ def amazon_call_ecs( asin, id_type, country )
 	url << "&ResponseGroup=Medium"
 	url << "&Version=#{@amazon_require_version}"
 
+	limit = 10
 	begin
-		Timeout.timeout( 10 ) do
+		Timeout.timeout( limit ) do
 			amazon_fetch( url )
 		end
-	rescue ArgumentError
+	rescue AmazonRedirectError
+		limit = $!.message.to_i
+		retry
+	rescue ArgumentError, SystemCallError, Net::HTTPExceptions
+		@logger.error "amazon.rb: #{$!.message} by #{asin}"
 	end
 end
 
@@ -90,7 +134,7 @@ def amazon_author( item )
 	begin
 		author = []
 		%w(Author Creator Artist).each do |elem|
-			item.elements.each( "*/#{elem}" ) do |a|
+			item.nodes( "*/#{elem}" ).each do |a|
 				author << a.text
 			end
 		end
@@ -101,7 +145,7 @@ def amazon_author( item )
 end
 
 def amazon_title( item )
-	@conf.to_native( item.elements.to_a( '*/Title' )[0].text, 'utf-8' )
+	@conf.to_native( item.nodes( '*/Title' )[0].text, 'utf-8' )
 end
 
 def amazon_image( item )
@@ -112,10 +156,15 @@ def amazon_image( item )
 		when 2; 'Small'
 		else;   'Medium'
 		end
-		img = item.elements.to_a("#{size}Image")[0] || item.elements.to_a("ImageSets/ImageSet/#{size}Image")[0]
-		image[:src] = img.elements['URL'].text
-		image[:height] = img.elements['Height'].text
-		image[:width] = img.elements['Width'].text
+		if item.nodes("#{size}Image")[0]
+			node_prefix = "#{size}Image"
+		elsif item.nodes("ImageSets/ImageSet/#{size}Image")[0]
+			node_prefix = "ImageSets/ImageSet/#{size}Image"
+		end
+		image[:src] = item.nodes("#{node_prefix}/URL")[0].text
+		image[:src].gsub!(/http:\/\/ecx\.images-amazon\.com/, 'https://images-na.ssl-images-amazon.com')
+		image[:height] = item.nodes("#{node_prefix}/Height")[0].text
+		image[:width] = item.nodes("#{node_prefix}/Width")[0].text
 	rescue
 		base = @conf['amazon.default_image_base'] || 'http://www.tdiary.org/images/amazondefaults/'
 		case @conf['amazon.imgsize']
@@ -137,12 +186,12 @@ def amazon_image( item )
 end
 
 def amazon_url( item )
-	item.elements.to_a( 'DetailPageURL' )[0].text
+	item.nodes( 'DetailPageURL' )[0].text
 end
 
 def amazon_label( item )
 	begin
-		@conf.to_native( item.elements.to_a( '*/Label' )[0].text, 'utf-8' )
+		@conf.to_native( item.nodes( '*/Label' )[0].text, 'utf-8' )
 	rescue
 		'-'
 	end
@@ -150,10 +199,10 @@ end
 
 def amazon_price( item )
 	begin
-		@conf.to_native( item.elements.to_a( '*/LowestNewPrice/FormattedPrice' )[0].text, 'utf-8' )
+		@conf.to_native( item.nodes( '*/LowestNewPrice/FormattedPrice' )[0].text, 'utf-8' )
 	rescue
 		begin
-			@conf.to_native( item.elements.to_a( '*/ListPrice/FormattedPrice' )[0].text, 'utf-8' )
+			@conf.to_native( item.nodes( '*/ListPrice/FormattedPrice' )[0].text, 'utf-8' )
 		rescue
 			'(no price)'
 		end
@@ -180,7 +229,7 @@ def amazon_detail_html( item )
 			<span class="amazon-author">#{h author}</span><br>
 			<span class="amazon-label">#{h amazon_label( item )}</span><br>
 			<span class="amazon-price">#{h amazon_price( item )}</span>
-		</span><br style="clear: left">
+		</span>
 	</span></a>
 	HTML
 end
@@ -202,7 +251,7 @@ def amazon_to_html( item, with_image = true, label = nil, pos = 'amazon' )
 		unless image[:src] then
 			img = ''
 		else
-			size = @cgi.smartphone? ? '' : %Q|height="#{h image[:height]}" width="#{h image[:width]}"|
+			size = %Q|height="#{h image[:height]}" width="#{h image[:width]}"|
 			img = <<-HTML
 			<img class="#{h pos}" src="#{h image[:src]}"
 			#{size} alt="#{h alt}">
@@ -213,33 +262,6 @@ def amazon_to_html( item, with_image = true, label = nil, pos = 'amazon' )
 
 	url = amazon_url( item )
 	%Q|<a href="#{h url}">#{img}#{h label}</a>|
-end
-
-def amazon_secure_html( asin, with_image, label, pos, country )
-	with_image = false if @mode == 'categoryview'
-	label = asin unless label
-
-	image = ''
-	if with_image and @conf['amazon.secure-cgi'] then
-		image = <<-HTML
-		<img class="#{h pos}"
-		src="#{h @conf['amazon.secure-cgi']}?asin=#{u asin};size=#{u @conf['amazon.imgsize']};country=#{u country}"
-		alt="">
-		HTML
-	end
-	image.gsub!( /\t/, '' )
-
-	if with_image and @conf['amazon.hidename'] || pos != 'amazon' then
-		label = ''
-	end
-
-	@conf["amazon.aid.#{@amazon_default_country}"] = @conf['amazon.aid'] unless @conf['amazon.aid'].to_s.empty?
-	aid = @conf["amazon.aid.#{country}"] || ''
-	amazon_url = @amazon_url_hash[country]
-	url =  "#{amazon_url}/#{u asin}"
-	url << "/#{u aid}" unless aid.empty?
-	url << "/ref=nosim/"
-	%Q|<a href="#{h url}">#{image}#{h label}</a>|
 end
 
 def amazon_get( asin, with_image = true, label = nil, pos = 'amazon' )
@@ -254,66 +276,56 @@ def amazon_get( asin, with_image = true, label = nil, pos = 'amazon' )
 		id_type = 'ASIN'
 	end
 
-	if @conf.secure then
-		amazon_secure_html( asin, with_image, label, pos, country )
-	else
+	begin
+		cache = "#{@cache_path}/amazon"
+		Dir::mkdir( cache ) unless File::directory?( cache )
 		begin
-			cache = "#{@cache_path}/amazon"
-			Dir::mkdir( cache ) unless File::directory?( cache )
-			begin
-				xml = File::read( "#{cache}/#{country}#{asin}.xml" )
-			rescue Errno::ENOENT
-				xml =  amazon_call_ecs( asin, id_type, country )
-				File::open( "#{cache}/#{country}#{asin}.xml", 'wb' ) {|f| f.write( xml )}
-			end
-			doc = REXML::Document::new( REXML::Source::new( xml ) ).root
-			item = doc.elements.to_a( '*/Item' )[0]
-			if pos == 'detail' then
-				amazon_detail_html( item )
-			else
-				amazon_to_html( item, with_image, label, pos )
-			end
-		rescue Timeout::Error
-			@logger.error "amazon.rb: Amazon API Timeouted."
-			message = asin
-			if @mode == 'preview' then
-				message << %Q|<span class="message">(Amazon API Timeouted))</span>|
-			end
-			message
-		rescue NoMethodError
-			message = label || asin
-			if @mode == 'preview' then
-				if item == nil then
-					m = doc.elements.to_a( 'Items/Request/Errors/Error/Message' )[0].text
-					message << %Q|<span class="message">(#{h @conf.to_native( m, 'utf-8' )})</span>|
-				else
-					message << %Q|<span class="message">(#{h $!}\n#{h $@.join( ' / ' )})</span>|
-				end
-			end
-			message
+			xml = File::read( "#{cache}/#{country}#{asin}.xml" )
+		rescue Errno::ENOENT
+			xml = amazon_call_ecs( asin, id_type, country )
+			File::open( "#{cache}/#{country}#{asin}.xml", 'wb' ) {|f| f.write( xml )}
 		end
+		parser = defined?(Oga) ? :oga : :rexml
+		item = AmazonItem.new(xml, parser)
+		if pos == 'detail' then
+			amazon_detail_html( item )
+		else
+			amazon_to_html( item, with_image, label, pos )
+		end
+	rescue Timeout::Error
+		@logger.error "amazon.rb: Amazon API Timeouted."
+		message = asin
+		if @mode == 'preview' then
+			message << %Q|<span class="message">(Amazon API Timeouted))</span>|
+		end
+		message
+	rescue NoMethodError
+		message = label || asin
+		if @mode == 'preview' then
+			if item.has_item? then
+				message << %Q|<span class="message">(#{h $!}\n#{h $@.join( ' / ' )})</span>|
+			else
+				m = item.nodes( 'Items/Request/Errors/Error/Message' )[0].text
+				message << %Q|<span class="message">(#{h @conf.to_native( m, 'utf-8' )})</span>|
+			end
+		end
+		message
 	end
 end
 
-unless @conf.secure and not @conf['amazon.secure-cgi'] then
-	add_conf_proc( 'amazon', @amazon_label_conf ) do
-		amazon_conf_proc
-	end
+add_conf_proc( 'amazon', @amazon_label_conf ) do
+	amazon_conf_proc
 end
 
 def amazon_conf_proc
 	if @mode == 'saveconf' then
-		unless @conf.secure and not @conf['amazon.secure-cgi'] then
-			@conf['amazon.imgsize'] = @cgi.params['amazon.imgsize'][0].to_i
-			@conf['amazon.hidename'] = (@cgi.params['amazon.hidename'][0] == 'true')
-			@conf['amazon.bitly'] = (@cgi.params['amazon.bitly'][0] == 'true')
-			unless @conf.secure then
-				@conf['amazon.nodefault'] = (@cgi.params['amazon.nodefault'][0] == 'true')
-				if @cgi.params['amazon.clearcache'][0] == 'true' then
-					Dir["#{@cache_path}/amazon/*"].each do |cache|
-						File::delete( cache.untaint )
-					end
-				end
+		@conf['amazon.imgsize'] = @cgi.params['amazon.imgsize'][0].to_i
+		@conf['amazon.hidename'] = (@cgi.params['amazon.hidename'][0] == 'true')
+		@conf['amazon.bitly'] = (@cgi.params['amazon.bitly'][0] == 'true')
+		@conf['amazon.nodefault'] = (@cgi.params['amazon.nodefault'][0] == 'true')
+		if @cgi.params['amazon.clearcache'][0] == 'true' then
+			Dir["#{@cache_path}/amazon/*"].each do |cache|
+				File::delete( cache )
 			end
 		end
 		unless @conf['amazon.hideconf'] then
@@ -322,43 +334,41 @@ def amazon_conf_proc
 	end
 
 	result = ''
-	unless @conf.secure and not @conf['amazon.secure-cgi'] then
+
+	result << <<-HTML
+		<h3>#{@amazon_label_imgsize}</h3>
+		<p><select name="amazon.imgsize">
+			<option value="0"#{" selected" if @conf['amazon.imgsize'] == 0}>#{@amazon_label_large}</option>
+			<option value="1"#{" selected" if @conf['amazon.imgsize'] == 1}>#{@amazon_label_regular}</option>
+			<option value="2"#{" selected" if @conf['amazon.imgsize'] == 2}>#{@amazon_label_small}</option>
+		</select></p>
+		<h3>#{@amazon_label_title}</h3>
+		<p><select name="amazon.hidename">
+			<option value="true"#{" selected" if @conf['amazon.hidename']}>#{@amazon_label_hide}</option>
+			<option value="false"#{" selected" unless @conf['amazon.hidename']}>#{@amazon_label_show}</option>
+		</select></p>
+	HTML
+
+	if @options['bitly.login'] and @options['bitly.key'] then
 		result << <<-HTML
-			<h3>#{@amazon_label_imgsize}</h3>
-			<p><select name="amazon.imgsize">
-				<option value="0"#{" selected" if @conf['amazon.imgsize'] == 0}>#{@amazon_label_large}</option>
-				<option value="1"#{" selected" if @conf['amazon.imgsize'] == 1}>#{@amazon_label_regular}</option>
-				<option value="2"#{" selected" if @conf['amazon.imgsize'] == 2}>#{@amazon_label_small}</option>
-			</select></p>
-			<h3>#{@amazon_label_title}</h3>
-			<p><select name="amazon.hidename">
-				<option value="true"#{" selected" if @conf['amazon.hidename']}>#{@amazon_label_hide}</option>
-				<option value="false"#{" selected" unless @conf['amazon.hidename']}>#{@amazon_label_show}</option>
+			<h3>#{@amazon_label_bitly}</h3>
+			<p><select name="amazon.bitly">
+				<option value="true"#{" selected" if @conf['amazon.bitly']}>#{@amazon_label_bitly_enabled}</option>
+				<option value="false"#{" selected" unless @conf['amazon.bitly']}>#{@amazon_label_bitly_disabled}</option>
 			</select></p>
 		HTML
-
-		if @options['bitly.login'] and @options['bitly.key'] then
-			result << <<-HTML
-				<h3>#{@amazon_label_bitly}</h3>
-				<p><select name="amazon.bitly">
-					<option value="true"#{" selected" if @conf['amazon.bitly']}>#{@amazon_label_bitly_enabled}</option>
-					<option value="false"#{" selected" unless @conf['amazon.bitly']}>#{@amazon_label_bitly_disabled}</option>
-				</select></p>
-			HTML
-		end
-
-		unless @conf.secure then
-			result << <<-HTML
-				<h3>#{@amazon_label_notfound}</h3>
-				<p><select name="amazon.nodefault">
-					<option value="true"#{" selected" if @conf['amazon.nodefault']}>#{@amazon_label_usetitle}</option>
-					<option value="false"#{" selected" unless @conf['amazon.nodefault']}>#{@amazon_label_usedefault}</option>
-				</select></p>
-				<h3>#{@amazon_label_clearcache}</h3>
-				<p><label for="amazon.clearcache"><input type="checkbox" id="amazon.clearcache" name="amazon.clearcache" value="true">#{@amazon_label_clearcache_desc}</label></p>
-			HTML
-		end
 	end
+
+	result << <<-HTML
+		<h3>#{@amazon_label_notfound}</h3>
+		<p><select name="amazon.nodefault">
+			<option value="true"#{" selected" if @conf['amazon.nodefault']}>#{@amazon_label_usetitle}</option>
+			<option value="false"#{" selected" unless @conf['amazon.nodefault']}>#{@amazon_label_usedefault}</option>
+		</select></p>
+		<h3>#{@amazon_label_clearcache}</h3>
+		<p><label for="amazon.clearcache"><input type="checkbox" id="amazon.clearcache" name="amazon.clearcache" value="true">#{@amazon_label_clearcache_desc}</label></p>
+	HTML
+
 	unless @conf['amazon.hideconf'] then
 		result << <<-HTML
 			<h3>#{@amazon_label_aid}</h3>

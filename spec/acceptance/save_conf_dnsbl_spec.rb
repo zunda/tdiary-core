@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'acceptance_helper'
 require 'resolv'
 
@@ -42,7 +41,7 @@ BODY
 	end
 
 	scenario 'IPベースのブラックリストでセーフの場合' do
-		allow(IPSocket).to receive(:getaddress) { raise TimeoutError }
+		allow(IPSocket).to receive(:getaddress) { raise Timeout::Error }
 
 		append_default_diary
 
@@ -92,7 +91,7 @@ BODY
 	end
 
 	scenario 'ドメインベースのブラックリストでセーフの場合' do
-		allow(Resolv).to receive(:getaddress) { raise TimeoutError }
+		allow(Resolv).to receive(:getaddress) { raise Timeout::Error }
 
 		append_default_diary
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # titile_list.rb
 #
 # title_list: 現在表示している月のタイトルリストを表示
@@ -10,7 +9,7 @@
 # 要があるでしょう。
 #
 # Copyright (c) 2005 TADA Tadashi <sho@spc.gr.jp>
-# You can distribute this file under the GPL2.
+# You can distribute this file under the GPL2 or any later version.
 #
 def title_list( rev = false )
 	result = %Q|<ul class="title-list">\n|

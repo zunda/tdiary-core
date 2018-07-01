@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # whatsnew.rb
 #
 # 名称：
@@ -30,10 +29,10 @@
 # のように指定します．
 #
 # Copyright (c) 2002 Junichiro KITA <kita@kitaj.no-ip.com>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 
-@whats_new = {}.taint
+@whats_new = {}
 
 def whats_new
 	return apply_plugin( @whats_new[:read_mark] ) unless @cgi

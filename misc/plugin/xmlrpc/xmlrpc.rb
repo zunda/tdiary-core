@@ -2,9 +2,8 @@
 # xmlrpc.rb
 #
 # Copyright (c) 2004 MoonWolf <moonwolf@moonwolf.com>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
-# require Ruby1.8 or xml-rpc(http://raa.ruby-lang.org/project/xml-rpc/)
 
 BEGIN { $stdout.binmode }
 
@@ -13,7 +12,7 @@ if FileTest::symlink?( __FILE__ ) then
 else
   org_path = File::dirname( __FILE__ )
 end
-$:.unshift org_path.untaint
+$:.unshift org_path
 require 'tdiary'
 require 'uri'
 

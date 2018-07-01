@@ -3,7 +3,7 @@
  *                            using jQuery UI autocomplete.
  *
  * Copyright (C) 2012 by tamoot <tamoot+tdiary@gmail.com>
- * You can distribute it under GPL.
+ * You can distribute it under GPL2 or any later version.
  */
 
 $(function() {
@@ -51,7 +51,7 @@ $(function() {
   }
   
   $( "#body" )
-    .bind( "keydown", function( event ) {
+    .on( "keydown", function( event ) {
       if ( event.keyCode === $.ui.keyCode.TAB &&
            $( this ).data( "autocomplete" ).menu.active ) {
         event.preventDefault();

@@ -14,7 +14,7 @@ vendor/bundle/
 spec/reports
 doc/*.html
 .rspec
+.ruby-version
 /Gemfile.local
 spec/javascripts/lib
-bower_components
 node_modules

@@ -4,7 +4,7 @@ Title: tDiary3 default
 Revision: $Revision: 1.0 $
 Author: TADA Tadashi
 Access: t@tdtds.jp
-License: GPL
+License: GPL2 or any later version
 Comment: default theme for tDiary 3.1 or later.
 
 Copyright 2011 (C) TADA Tadashi <t@tdtds.jp>
@@ -212,22 +212,24 @@ div.section img {
 	border-width: 1px;
 }
 
+div.section img.photo {
+	display: block;
+	float: none;
+	margin: 0px auto;
+	margin-bottom: 10px;
+}
+
 div.section img.right, img.amazon {
+	display: inline;
 	float: right;
 	margin-left: 10px;
 	margin-bottom: 10px;
 }
 
 div.section img.left {
+	display: inline;
 	float: left;
 	margin-right: 10px;
-	margin-bottom: 10px;
-}
-
-div.section img.photo {
-	display: block;
-	float: none;
-	margin: 0px auto;
 	margin-bottom: 10px;
 }
 
@@ -673,11 +675,14 @@ div.sidebar div.calendar {
  */
 @media screen and (max-device-width: 480px) {
 	body {
+		box-sizing: border-box;
 	}
 
 	div.adminmenu {
 		font-size: x-small;
 		margin: 0px;
+		padding-left: 0px;
+		padding-right: 0px;
 		width: 100%;
 	}
 
@@ -687,7 +692,7 @@ div.sidebar div.calendar {
 	}
 
 	div.whole-content {
-		width: 100%;
+		width: 95%;
 	}
 
 	div.main {
@@ -714,7 +719,8 @@ div.sidebar div.calendar {
 		display: block;
 		float: none;
 		margin: 10px auto;
-		max-width: 300px !important;
+		max-width: 78vw !important;
+		height: auto;
 	}
 
 	div.section img.amazon {
@@ -738,6 +744,10 @@ div.sidebar div.calendar {
 
 	textarea {
 		font-size: 110%;
+	}
+
+	div.sidebar {
+		display: none;
 	}
 }
 

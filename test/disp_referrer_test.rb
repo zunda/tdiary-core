@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require File.expand_path('../test_helper', __FILE__)
 require File.expand_path('../test_plugin_helper', __FILE__)
 
@@ -18,7 +16,6 @@ require 'uri'
 
 # Stub for @conf
 class DispReferrerStubConf
-	def secure; false; end
 	def options; {}; end
 	def referer_table; []; end
 	def no_referer; []; end
@@ -35,7 +32,7 @@ module TDiary
 	end
 end
 
-# Methods that shuold have been defined in Plugin
+# Methods that should have been defined in Plugin
 class Object
 	def referer_today; '本日のリンク元'; end
 end

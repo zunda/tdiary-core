@@ -1,16 +1,14 @@
-# -*- coding: utf-8 -*-
 #
 # recent_comment3: 最近のツッコミをリストアップする
 #
-#   @secure = true な環境では動作しません．
-#
 # Copyright (c) 2002 Junichiro KITA <kita@kitaj.no-ip.com>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 require 'pstore'
 require 'fileutils'
 require 'time'
 require 'pathname'
+require 'tdiary/diary_container'
 
 def recent_comment3_format(format, *args)
 	format.gsub(/\$(\d)/) {|s| args[$1.to_i - 1]}
@@ -41,12 +39,10 @@ def recent_comment3_init
 end
 
 def recent_comment3(ob_max = 'OBSOLUTE' ,sep = 'OBSOLUTE',ob_date_format = 'OBSOLUTE',*ob_except )
-	return 'DO NOT USE IN SECURE MODE' if @conf.secure
-
 	migrate_old_data
 	recent_comment3_init
 
-	cache = @conf['recent_comment3.cache'].untaint
+	cache = @conf['recent_comment3.cache']
 	date_format = @conf['recent_comment3.date_format']
 	excepts = @conf['recent_comment3.except_list'].split(/,/)
 	format = @conf['recent_comment3.format']
@@ -95,13 +91,9 @@ def recent_comment3(ob_max = 'OBSOLUTE' ,sep = 'OBSOLUTE',ob_date_format = 'OBSO
 		if entries.size == 0
 			notfound_msg
 		else
-			cgi = CGI::new
-			def cgi.referer; nil; end
-
 			tree_order.each do |entry_date|
 				a_entry = @index + anchor(entry_date)
-				cgi.params['date'] = [entry_date]
-				diary = TDiaryDay::new(cgi, '', @conf)
+				diary = DiaryContainer::find_by_day(@conf, entry_date)
 				title = diary.diaries[entry_date].title.gsub( /<[^>]*>/, '' ) if diary
 
 				if title.nil? || title.length == 0 || title.strip.delete('　').delete(' ').length == 0 then
@@ -137,7 +129,7 @@ add_update_proc do
 	recent_comment3_init
 
 	date = @date.strftime( '%Y%m%d' )
-	cache = @conf['recent_comment3.cache'].untaint
+	cache = @conf['recent_comment3.cache']
 	size = @conf['recent_comment3.cache_size']
 
 	if @mode == 'comment' && @comment && @comment.visible?

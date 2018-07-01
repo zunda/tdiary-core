@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # comment_mail_qmail.rb
 #
 # qmailを使ってツッコミをメールで知らせる
@@ -26,12 +25,12 @@
 #          無指定時には「'/var/qmail/bin/qmail-inject'」。
 #
 # Copyright (c) 2003 TADA Tadashi <sho@spc.gr.jp>
-# You can distribute this file under the GPL.
+# You can distribute this file under the GPL2 or any later version.
 #
 def comment_mail( text, to )
 	begin
 		qmail = @conf['comment_mail.qmail'] || '/var/qmail/bin/qmail-inject'
-		open( %Q[|'#{qmail.gsub(/'/, '')}' -f '#{@conf.author_mail.gsub( /'/, '' ).untaint}' '#{to.map{|x|x.gsub(/'/,'')}.join("' '")}'], 'w' ) do |o|
+		open( %Q[|'#{qmail.gsub(/'/, '')}' -f '#{@conf.author_mail.gsub( /'/, '' )}' '#{to.map{|x|x.gsub(/'/,'')}.join("' '")}'], 'w' ) do |o|
 			o.write( text )
 		end
 	rescue

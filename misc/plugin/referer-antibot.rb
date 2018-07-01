@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # referer-antibot.rb
 #
 # 検索エンジンの巡回BOTには「本日のリンク元」を見せないようにする
@@ -28,7 +27,7 @@
 #
 # Copyright (C) 2002 MUTOH Masao <mutoh@highway.ne.jp>
 # Modified by TADA Tadashi <sho@spc.gr.jp>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 
 # short referer

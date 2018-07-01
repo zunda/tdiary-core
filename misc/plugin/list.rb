@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # list.rb
 #
 # <ol> 順番付きリスト生成
@@ -12,7 +11,7 @@
 #     l: リスト文字列(\nくぎり)
 #
 # Copyright (c) 2002 abbey <inlet@cello.no-ip.org>
-# Distributed under the GPL.
+# Distributed under the GPL2 or any later version.
 #
 
 def ol( l, t = nil, s = nil )

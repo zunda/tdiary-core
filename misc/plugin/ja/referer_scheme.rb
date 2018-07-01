@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 =begin
 = Meta-scheme plugin((-$Id: referer_scheme.rb,v 1.9 2008-03-02 09:01:46 kazuhiko Exp $-))
 本日のリンク元置換リストの記述を楽にします。
@@ -45,8 +44,7 @@ tdiarynet:やhatena:で始まるURLは、
 Copyright (C) 2003 zunda <zunda at freeshell.org>
 
 Permission is granted for use, copying, modification, distribution, and
-distribution of modified versions of this work under the terms of GPL
-version 2 or later.
+distribution of modified versions of this work under the terms of GPL version 2 or later.
 =end
 
 unless @conf.referer_table.respond_to?( 'scheme_tdiarynet', true ) then

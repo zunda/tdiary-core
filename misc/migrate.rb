@@ -1,11 +1,10 @@
-# -*- coding: utf-8; -*-
 #!/usr/bin/env ruby
 #
 # migrate.rb $Revision: 1.2 $
 #
 # Copyright (C) 2001-2003, TADA Tadashi <sho@spc.gr.jp>
 # Copyright (C) 2007, Kazuhiko <kazuhiko@fdiary.net>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 BEGIN { $stdout.binmode }
 
@@ -18,7 +17,7 @@ begin
 	else
 		org_path = File::dirname( __FILE__ )
 	end
-	$:.unshift( org_path.untaint )
+	$:.unshift( org_path )
 	require 'tdiary'
 
 	class TDiary::MigrateConfig < TDiary::Config

@@ -1,10 +1,9 @@
-# -*- coding: utf-8; -*-
 #
 # antispamservice.rb: tDiary comment spam filter using API setup plugin. $Revision: 1.3 $
 #
 # Copyright (C) TADA Tadashi <sho@spc.gr.jp> 2007.
 # Modified by SHIBATA Hiroshi <shibata.hiroshi@gmail.com> 2008.
-# Distributed under GPL2.
+# Distributed under GPL2 or any later version.
 #
 
 require 'net/http'

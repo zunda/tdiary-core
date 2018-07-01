@@ -13,7 +13,7 @@
 #      show_modified: show modified time of the entry (true)
 #
 # Copyright (c) 2003-2005 Kouhei Sutou <kou@cozmixng.org>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 
 require "rss/rss"
@@ -28,10 +28,6 @@ RECENT_RSS_HTTP_HEADER = {
 }
 
 def recent_rss( url, max = 5, cache_time = 3600, show_modified = true )
-	return 'DO NOT USE IN SECURE MODE' if @conf.secure
-
-	url.untaint
-
 	cache_file = "#{@cache_path}/recent_rss.#{CGI.escape(url)}"
 
 	recent_rss_cache_rss(url, cache_file, cache_time.to_i)
@@ -76,6 +72,7 @@ class InvalidResourceError < StandardError; end
 class RSSNotModified < StandardError; end
 
 require 'time'
+require 'timeout'
 require 'net/http'
 require 'uri/generic'
 require 'rss/parser'
@@ -104,7 +101,7 @@ def recent_rss_cache_rss(url, cache_file, cache_time)
 			raise InvalidResourceError if rss_source.nil?
 
 			# parse RSS
-			rss = ::RSS::Parser.parse(rss_source.untaint, false)
+			rss = ::RSS::Parser.parse(rss_source, false)
 			raise ::RSS::Error if rss.nil?
 
 			# pre processing
@@ -150,7 +147,7 @@ def recent_rss_fetch_rss(uri, cache_time)
 	px_host, px_port = (@conf['proxy'] || '').split( /:/ )
 	px_port = 80 if px_host and !px_port
 	begin
-		timeout( 10 ) do
+		Timeout::timeout( 10 ) do
 			res = Net::HTTP::Proxy( px_host, px_port ).get_response( uri )
 			case res
 			when Net::HTTPSuccess
@@ -164,7 +161,7 @@ def recent_rss_fetch_rss(uri, cache_time)
 				raise InvalidResourceError
 			end
 		end
-	rescue TimeoutError, SocketError, StandardError
+	rescue Timeout::Error, SocketError, StandardError
 		raise InvalidResourceError
 	end
 	rss

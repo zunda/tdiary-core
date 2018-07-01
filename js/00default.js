@@ -2,7 +2,7 @@
  00default.js: default javascript file for tDiary
 
  Copyright (C) 2010, TADA Tadashi <t@tdtds.jp>
- You can redistribute it and/or modify it under GPL2.
+ You can redistribute it and/or modify it under GPL2 or any later version.
  */
 
 /*
@@ -85,7 +85,7 @@ $.extend({
 		
 		switch($tDiary.style){
 			case 'wiki':
-		        case 'gfm':
+			case 'gfm':
 			case 'markdown':
 				tag = ['{{', '}}'];
 				break;

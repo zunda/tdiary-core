@@ -1,4 +1,4 @@
-$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '../../misc/plugin')).untaint
+$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '../../misc/plugin'))
 
 require File.dirname(__FILE__) + "/../spec_helper"
 require 'erb'
@@ -20,6 +20,7 @@ class PluginFake
 		@conf_procs = []
 		@body_enter_procs = []
 		@body_leave_procs = []
+		@content_procs = {}
 	end
 
 	def add_conf_proc( key, label, genre=nil, &block )
@@ -36,6 +37,10 @@ class PluginFake
 
 	def add_update_proc( block = Proc::new )
 		@update_procs << block
+	end
+
+	def add_content_proc( key, block = Proc::new )
+		@content_procs[key] = block
 	end
 
 	def conf_proc
@@ -86,11 +91,16 @@ class PluginFake
 		r.join.chomp
 	end
 
+	def content_proc( key, date )
+		@content_procs[key].call( date )
+	end
+
 	class Config
 
 		attr_accessor :index, :update, :author_name, :author_mail, :index_page,
 			:html_title, :theme, :css, :date_format, :referer_table, :options, :cgi,
-			:plugin_path, :lang, :style, :secure
+			:plugin_path, :lang, :style,
+			:io_class
 
 		def initialize
 			@cgi = CGIFake.new
@@ -98,6 +108,7 @@ class PluginFake
 			@options2 = {}
 			@index = './'
 			@html_title = ''
+			@io_class = DummyIO
 
 			bot = ["bot", "spider", "antenna", "crawler", "moget", "slurp"]
 			bot += @options['bot'] || []
@@ -136,7 +147,7 @@ class PluginFake
 	end
 
 	def smartphone?
-		@conf.cgi.smartphone?
+		false
 	end
   alias iphone? smartphone?
 end
@@ -149,20 +160,19 @@ class CGIFake
 	end
 
 	def mobile_agent?
-		self.user_agent =~ %r[
-			^DoCoMo|
-			^(?:KDDI|UP\.Browser)|
-			^(?:J-(?:PHONE|EMULATOR)|Vodafone|SoftBank|MOT-|[VS]emulator)|
-			WILLCOM|DDIPOCKET|
-			PDXGW|ASTEL|Palmscape|Xiino|sharp\ pda\ browser|Windows\ CE|L-mode
-		]x
+		false
 	end
 
 	def smartphone?
-		self.user_agent =~ /iP(?:hone|od)/
+		false
 	end
 end
 
+class DummyIO
+	def self.plugin_open(conf); nil; end
+	def self.plugin_close(storage); end
+	def self.plugin_transaction(storage, plugin); end
+end
 
 def fake_plugin( name_sym, cgi=nil, base=nil, &block )
 	plugin = PluginFake.new
@@ -185,7 +195,7 @@ end
 
 def plugin_path( plugin_sym, base=nil )
 	paths = []
-	paths << ( base ? base : File.join(TDiary.library_root, "misc/plugin") )
+	paths << ( base ? base : File.join(TDiary.root, "misc/plugin") )
 	paths << "#{plugin_sym.to_s}.rb"
 	File.expand_path( File.join( paths ))
 end

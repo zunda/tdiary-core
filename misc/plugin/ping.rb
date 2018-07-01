@@ -3,7 +3,7 @@
 # ping to weblog ping servers.
 #
 # Copyright (c) 2004 TADA Tadashi <sho@spc.gr.jp>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 # Modified: by MoonWolf <moonwolf@moonwolf.com>
 #
@@ -36,11 +36,11 @@ def ping( list )
 	require 'timeout'
 	threads = []
 	list.each do |url|
-		u = URI::parse( url.untaint )
+		u = URI::parse( url )
 		next unless u.host
 		threads << Thread.start( u, xml ) do |u, xml|
 			begin
-				timeout( @conf['ping.timeout'].to_i ) do
+				Timeout::timeout( @conf['ping.timeout'].to_i ) do
 					Net::HTTP.start( u.host, u.port ) do |http|
 						http.post( u.path, xml, 'Content-Type' => 'text/xml' )
 					end

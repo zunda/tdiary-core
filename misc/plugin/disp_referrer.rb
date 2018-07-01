@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 =begin
 = 本日のリンク元もうちょっとだけ強化プラグイン((-$Id: disp_referrer.rb,v 1.70 2008-03-02 09:01:45 kazuhiko Exp $-))
 
@@ -28,8 +27,7 @@ Please note that some methods in this plugin are written by other
 authors as written in the comments.
 
 Permission is granted for use, copying, modification, distribution, and
-distribution of modified versions of this work under the terms of GPL
-version 2 or later.
+distribution of modified versions of this work under the terms of GPL version 2 or later.
 =end
 
 =begin ChangeLog
@@ -76,7 +74,6 @@ See ChangeLog for changes after this.
 Dispref2plugin = self
 Dispref2plugin_cache_path = @cache_path
 Dispref2plugin_cache_dir = @cache_dir
-Dispref2plugin_secure = @conf.secure
 
 # cache format
 Root_DispRef2URL = 'dispref2url' # root for DispRef2URLs
@@ -141,99 +138,18 @@ DispRef2Storeのパスの管理をします。
       本物のPSToreが使える時はtrue、そうでない時はfalseを返します。
 =end
 
-unless @conf and @conf.secure then
-	class DispRef2CachePath
-		def initialize( setup )
-			@setup = setup
-		end
-		def cache( date )
-			return File.join( @setup['cache_dir'], 'volatile.tdr2.cache' ) unless date
-			begin
-				Dir.mkdir( @setup['cache_dir'].untaint )
-			rescue Errno::EEXIST
-			end
-			File.join( @setup['cache_dir'], date.strftime( '%Y%m.tdr2.cache' ) )
-		end
-		def caches( include_backup = true )
-			if include_backup then
-				r = Dir.glob( File.join( @setup['cache_dir'], '??????.tdr2.cache*' ) )
-			else
-				r = Dir.glob( File.join( @setup['cache_dir'], '??????.tdr2.cache' ) )
-			end
-			r.collect{ |p| p.untaint }
-		end
-		def size
-			r = 0
-			caches.each do |path|
-				r += File.size( path )
-			end
-			r
-		end
-		def clear
-			# current version
-			caches.each do |path|
-				begin
-					File.unlink( path )
-				rescue Errno::ENOENT
-				end
-			end
-			# older version
-			if @setup['cache_path'] then
-				[ @setup['cache_path'], @setup['cache_path']+'~' ].each do |f|
-					File.unlink( f ) if FileTest::exist?( f )
-				end
-			end
-		end
-		def shrink
-			return if @setup['cache_max_size'] <= 0
-			size = 0
-			begin
-				caches.sort{ |a,b| File.atime( b ) <=> File.atime( a ) }.each do |path|
-					if size < @setup['cache_max_size'] then
-						size += File.size( path )
-					else
-						File.unlink( path )
-					end
-				end
-			rescue Errno::ENOENT
-			end
-		end
+class DispRef2PStore < DispRef2DummyPStore
+	def real?
+		false
 	end
-
-	require 'pstore'
-	class DispRef2PStore < PStore
-		def real?
-			true
-		end
-		def transaction( read_only = false )
-			begin
-				super
-			rescue TypeError
-				File.unlink( self.path )
-				super
-			rescue ArgumentError
-				super()
-			end
-		end
-	end
-else
-	class DispRef2PStore < DispRef2DummyPStore
-		def real?
-			false
-		end
-	end
-	class DispRef2CachePath < DispRef2CachePathDummy
-	end
+end
+class DispRef2CachePath < DispRef2CachePathDummy
 end
 
 =begin
 === Tdiary::Plugin::DispRef2String
 文字コードの変換、URL、HTMLでの取り扱いに関するメソッド群です。インスタ
-ンスは作りません。UconvライブラリやNoraライブラリがあればそれを使い、無
-ければ無いなりに処理します。
-
---- DispRef2String::nora?
-      Noraが使える時にはtrue、そうでないときにはfalseを返します。
+ンスは作りません。Uconvライブラリがあればそれを使い、無ければ無いなりに処理します。
 
 --- DispRef2String::normalize( str )
       続く空白を取り去ったりsite:...という文字列を消したりして、検索キー
@@ -322,54 +238,24 @@ class DispRef2String
 		nil
 	end
 
-	# escapeHTML: escape to be used in HTML
-	# unescape: unesape the URL
-	@@have_nora = false
-	begin
-		begin
-			require 'web/escape'
-			@@have_nora = true
-		rescue LoadError
-			require 'escape'
-			@@have_nora = true
-		end
-		def self::escapeHTML( str )
-			str ? Web::escapeHTML( str ) : ''
-		end
-		def self::unescape( str )
-			str ? Web::unescape( str ) : ''
-		end
-	rescue LoadError
-		def self::unescape( str )
-			if str then
-				# escape ruby 1.6 bug.
-				begin
-					str.gsub( /\+/, ' ').gsub(/((?:%[0-9a-fA-F]{2})+)/n) do
-						[$1.delete('%')].pack('H*')
-					end
-				rescue Encoding::CompatibilityError
-					''
+	def self::unescape( str )
+		if str then
+			# escape ruby 1.6 bug.
+			begin
+				str.gsub( /\+/, ' ').gsub(/((?:%[0-9a-fA-F]{2})+)/n) do
+					[$1.delete('%')].pack('H*')
 				end
-			else
+			rescue Encoding::CompatibilityError
 				''
 			end
-		end
-		begin
-			require 'erb'
-			extend ERB::Util
-			def DispRef2String::escapeHTML( str )
-				str ? h( str ) : ''
-			end
-		rescue LoadError
-			def DispRef2String::escapeHTML( str )
-				str ? CGI::escapeHTML( str ) : ''
-			end
+		else
+			''
 		end
 	end
 
-	# Nora?
-	def self::nora?
-		@@have_nora
+	extend ERB::Util
+	def DispRef2String::escapeHTML( str )
+		str ? h( str ) : ''
 	end
 
 	# add K, M with 1024 divisions
@@ -515,7 +401,7 @@ class DispRef2Setup < Hash
 			# キャッシュの合計量の制限(バイト)です。時々越えます。
 			# 0未満なら制限しません。
 		'no_cache' => false,
-			# trueの場合、@secure=falseな日記でもキャッシュを使いません。
+			# trueの場合キャッシュを使いません。
 		'normal-unknown.title' => '\Ahttps?:\/\/',
 			# 置換された「その他」のリンク元のタイトル、あるいは置換されていな
 			# いリンク元のタイトルにマッチします。
@@ -526,7 +412,7 @@ class DispRef2Setup < Hash
 			# \n区切で並べます
 	}
 
-	attr_reader :is_long, :referer_table, :no_referer, :secure, :years, :conf
+	attr_reader :is_long, :referer_table, :no_referer, :years, :conf
 
 	def initialize( conf, limit = 100, is_long = true, years = nil, mode = nil )
 		super()
@@ -542,9 +428,6 @@ class DispRef2Setup < Hash
 		# URL tables
 		@referer_table = conf.referer_table
 		@no_referer = conf.no_referer
-
-		# security
-		@secure = Dispref2plugin_secure
 
 		# options from tDiary
 		update!
@@ -822,7 +705,6 @@ class DispRef2URL
 						break
 					end
 				else
-					name.untaint unless setup.secure
 					if title.gsub!( /#{url}/iu ) { eval name } then
 						matched = true
 						break
@@ -1198,7 +1080,7 @@ class DispRef2SetupIF
 		else
 			@current_mode = Options
 		end
-		if not @setup.secure and not @setup['no_cache'] then
+		unless @setup['no_cache'] then
 			@cache = @setup.cache_path
 		else
 			@cache = nil
@@ -1218,7 +1100,7 @@ class DispRef2SetupIF
 		end
 
 		# clear cache
-		if @mode == 'saveconf' and not @setup.secure then
+		if @mode == 'saveconf' then
 			if not @setup['no_cache'] then
 				unless @cache then
 					@need_cache_update = true
@@ -1248,11 +1130,6 @@ class DispRef2SetupIF
 	# show description
 	def show_description
 		r = Disp_referrer2_abstract.dup
-		if DispRef2String.nora? then
-			r << Disp_referrer2_with_Nora
-		else
-			r << Disp_referrer2_without_Nora
-		end
 		if @cache then
 			r << sprintf( Disp_referrer2_cache_info, DispRef2String::bytes( @cache.size ) )
 			r << sprintf( Disp_referrer2_update_info, "#{DispRef2String::escapeHTML(@conf.update)}?conf=referer" )
@@ -1456,27 +1333,8 @@ def referer_of_today_long( diary, limit = 100 )
 	r
 end
 
-# for newest diary
-#alias dispref2_original_referer_of_today_short referer_of_today_short
-#def referer_of_today_short( diary, limit = 10 )
-#	return '' if bot?
-#	return dispref2_original_referer_of_today_short( diary, limit ) if @options.has_key?( 'disp_referrer2.short.only_normal' ) and not @options['disp_referrer2.short.only_normal']
-#	setup = DispRef2Setup.new( @conf, limit, false, nil, @mode )
-#	DispRef2Refs.new( diary, setup ).to_short_html
-#end
-
 # we have to know the unknown urls at this moment in a secure diary
-if @conf.secure and (\
-	( @cgi.params['dr2.change_mode'] \
-		and DispRef2SetupIF::RefList == @cgi.params['dr2.new_mode'][0] ) \
-		or ( @cgi.params['dr2.current_mode'] \
-		and DispRef2SetupIF::RefList == @cgi.params['dr2.current_mode'][0] ) )
-then
-	setup = DispRef2Setup.new( @conf, 100, true, @mode )
-	DispRef2Latest_cache = DispRef2Latest.new( @cgi, 'latest.rhtml', @conf, setup )
-else
-	DispRef2Latest_cache = nil
-end
+DispRef2Latest_cache = nil
 
 # Local Variables:
 # mode: ruby

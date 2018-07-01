@@ -1,20 +1,20 @@
 #!/usr/bin/env ruby
-# -*- coding: utf-8; -*-
+# -*- coding: ascii-8bit; -*-
 #
 # index.rb
 #
 # Copyright (C) 2001-2009, TADA Tadashi <t@tdtds.jp>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 BEGIN { $stdout.binmode }
 
 begin
 	if FileTest::symlink?( __FILE__ ) then
-		org_path = File::dirname( File::readlink( __FILE__ ) ).untaint
+		org_path = File::dirname( File::readlink( __FILE__ ) )
 	else
-		org_path = File::dirname( __FILE__ ).untaint
+		org_path = File::dirname( __FILE__ )
 	end
-	$:.unshift( org_path ) unless $:.include?( org_path )
+	$:.unshift( (org_path + '/lib') ) unless $:.include?( org_path + '/lib' )
 	require 'tdiary'
 
 	encoding_error = {}

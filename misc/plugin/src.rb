@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # src.rb
 #
 # src: 外部ファイルを挿入する(HTMLエスケープ付き)
@@ -6,7 +5,7 @@
 #     file: ファイル名
 #
 # Copyright (c) 2005 TADA Tadashi <sho@spc.gr.jp>
-# You can distribute this file under the GPL2.
+# You can distribute this file under the GPL2 or any later version.
 #
 def src( file )
 	h( File::readlines( file ).join )

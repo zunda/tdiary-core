@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 =begin
 = 本日のリンク元もうちょっとだけ強化プラグイン((-$Id: disp_referrer.rb,v 1.46 2008-03-02 09:01:46 kazuhiko Exp $-))
 日本語リソース
@@ -29,8 +28,7 @@
   URLは１つのカテゴリーしか持てないことにご注意ください。-))
 * 基本的な設定をWWWブラウザからできるようになった
 * disp_referrer.rbが無くても使える
-* UconvライブラリやNoraライブラリがあればあるなりに、無ければないなりに
-  動作する
+* Uconvライブラリがあればあるなりに、無ければないなりに動作する
 という利点があります。
 
 == 使い方
@@ -98,8 +96,6 @@ tdiary-1.5.3-20030509以降で使えます。これ以前のtDiary-1.5では、
 00default.rbにbot?メソッドが定義されていないため、検索エンジンのクロール
 に対してリンク元が表示されてしまいます。
 
-secureモードでも使えますがキャッシュによる高速化ができません。
-
 mod_rubyでの動作は今のところ確認していません。
 
 === インストール方法
@@ -107,13 +103,6 @@ mod_rubyでの動作は今のところ確認していません。
 グインの最新版は、
 ((<URL:http://zunda.freeshell.org/d/plugin/disp_referrer2.rb>))
 にあるはずです。
-
-また、Noraライブラリがインストールされている場合には、URLの解釈やHTMLの
-エスケープに、Rubyに標準添付のCGIライブラリの代わりにNoraライブラリを使
-用します。これにより、処理速度が若干速くなります((-手元で試したところ、
-一日分の表示にかかる時間が1割程度短かくなりました。-))。Noraについての詳
-細は、((<URL:http://raa.ruby-lang.org/list.rhtml?name=Nora>))を参照して
-ください。
 
 === オプション
 この日記で設定できるオプションの一覧は、DispRef2Setup::Defaultsにありま
@@ -143,7 +132,6 @@ mod_rubyでの動作は今のところ確認していません。
 皆様に感謝いたします。
 
 == Todos
-* secure=trueでリンク元置換リストのテキストフィールドでリターンを押した際の動作
 * parse_as_search高速化: hostnameのキャッシュ？
 
 == 著作権について
@@ -153,8 +141,7 @@ Please note that some methods in this plugin are written by other
 authors as written in the comments.
 
 Permission is granted for use, copying, modification, distribution, and
-distribution of modified versions of this work under the terms of GPL
-version 2 or later.
+distribution of modified versions of this work under the terms of GPL version 2 or later.
 =end
 
 =begin ChangeLog
@@ -199,32 +186,20 @@ See ../ChangeLog for changes after this.
 =end
 
 # Message strings
-Disp_referrer2_name = 'リンク元もうちょっと強化'.taint
-Disp_referrer2_abstract = <<'_END'.taint
+Disp_referrer2_name = 'リンク元もうちょっと強化'
+Disp_referrer2_abstract = <<'_END'
 <p>
 	アンテナからのリンク、サーチエンジンの検索結果を、
 	通常のリンク元の下にまとめて表示します。
 	サーチエンジンの検索結果は、検索語毎にまとめられます。
 </p>
 _END
-Disp_referrer2_with_Nora = <<'_END'.taint
-<p>
-	Noraライブラリを使っていますので、表示が少し速いはずです。
-</p>
-_END
-Disp_referrer2_without_Nora = <<'_END'.taint
-<!-- p>
-	表示速度が気になる場合は、
-	<a href="http://www.moonwolf.com/ruby/archive/nora-20040830.tar.gz">Nora
-	ライブラリ</a>をインストールしてみてください。
-</p -->
-_END
-Disp_referrer2_cache_info = <<'_END'.taint
+Disp_referrer2_cache_info = <<'_END'
 <p>
 	現在、キャッシュの大きさは%1$sバイトです。
 </p>
 _END
-Disp_referrer2_update_info = <<'_END'.taint
+Disp_referrer2_update_info = <<'_END'
 <p>
 	「<a href="%1$s">リンク元</a>」の変更の後には、
 	このチェックボックス
@@ -233,20 +208,20 @@ Disp_referrer2_update_info = <<'_END'.taint
 	キャッシュのクリアをしてくさい。
 </p>
 _END
-Disp_referrer2_move_to_refererlist = <<'_END'.taint
+Disp_referrer2_move_to_refererlist = <<'_END'
 	その他のリンク元の置換リストの編集に<a href="%s">移る</a>。
 _END
-Disp_referrer2_move_to_config = <<'_END'.taint
+Disp_referrer2_move_to_config = <<'_END'
 	基本的な設定に<a href="%s">移る</a>。
 _END
-Disp_referrer2_also_todayslink = <<'_END'.taint
+Disp_referrer2_also_todayslink = <<'_END'
 	リンク元置換リストは「<a href="%s">リンク元</a>」からも編集できます。
 _END
-Disp_referrer2_antenna_label = 'アンテナ'.taint
-Disp_referrer2_unknown_label = 'その他のリンク元'.taint
-Disp_referrer2_search_label = '検索'.taint
-Disp_referrer2_search_unknown_keyword = 'キーワード不明'.taint
-Disp_referrer2_cache_label = '(%sのキャッシュ)'.taint
+Disp_referrer2_antenna_label = 'アンテナ'
+Disp_referrer2_unknown_label = 'その他のリンク元'
+Disp_referrer2_search_label = '検索'
+Disp_referrer2_search_unknown_keyword = 'キーワード不明'
+Disp_referrer2_cache_label = '(%sのキャッシュ)'
 
 class DispRef2SetupIF
 
@@ -308,7 +283,6 @@ class DispRef2SetupIF
 				<td><label for="dr2.search.expand.false"><input id="dr2.search.expand.false" name="dr2.search.expand" value="false" type="radio"#{' checked'if not @setup['search.expand']}>表示しない</label>。
 			</table>
 		_HTML
-		unless @setup.secure then
 		r << <<-_HTML
 			<h3>キャッシュ</h3>
 			<p>キャッシュ機能は、tDiary2形式(DefaultIO)使用時は利用できません。</p>
@@ -328,19 +302,14 @@ class DispRef2SetupIF
 			</table>
 			<p>キャッシュの大きさの制限は目安です。これよりも大きくなる場合もあります。キャッシュの大きさの制限を0にすると、キャッシュの大きさを制限しなくなります。最後にKやMをつけると、キロバイト、メガバイト単位になります。</p>
 		_HTML
-		end # unless @setup.secure
 		r
 	end
 
 	# shows URL list to be added to the referer_table or no_referer
 	def show_unknown_list
-		if @setup.secure then
+		urls = DispRef2Cache.new( @setup ).urls( DispRef2URL::Unknown ).keys
+		if urls.size == 0 then
 			urls = DispRef2Latest.new( @cgi, 'latest.rhtml', @conf, @setup ).unknown_urls
-		else
-			urls = DispRef2Cache.new( @setup ).urls( DispRef2URL::Unknown ).keys
-			if urls.size == 0 then
-				urls = DispRef2Latest.new( @cgi, 'latest.rhtml', @conf, @setup ).unknown_urls
-			end
 		end
 		urls.reject!{ |url| DispRef2String::url_match?( url, @setup['reflist.ignore_urls'] ) }
 		r = <<-_HTML
@@ -464,7 +433,6 @@ DispReferrer2_Engines = {
 		[%r{\Ahttp://(?:image-search\.yahoo\.co\.jp/(?:search|detail)|images\.search\.yahoo\.co\.jp/bin/(?:search|query))}, '".co.jpのYahoo!画像検索"', ['p'], DispReferrer2_Google_cache],
 		[%r{\Ahttp://images\.search\.yahoo\.(:?com|co\.jp)/search/images(?:/view)?}, '".comのYahoo!画像検索"', ['p'], DispReferrer2_Google_cache],
 	],
-	'yahoofs' => [[%r{\Ahttp://cache\.yahoofs\.jp/}i, '"Yahoo!検索"', ['w'], DispReferrer2_Yahoofs]],
 	'netscape' => [[%r{\Ahttp://[^/]+\.netscape\.([^/]+)/}i, '".#{$1}のNetscape検索"', ['search', 'query'], DispReferrer2_Google_cache]],
 	'msn' => [[%r{\Ahttp://[^/]+\.MSN\.([^/]+)/}i, '".#{$1}のMSNサーチ"', ['q', 'MT'], nil ]],
 	'bing' => [[%r{\Ahttp://(www|jp)\.bing\.com/}i, '"Bing検索"', ['q'], nil ]],
@@ -493,7 +461,6 @@ DispReferrer2_Engines = {
 		[%r{\Ahttp://srchnavi\.nifty\.com/}i, '"@niftyのリダイレクタ"', ['title'], nil ],
 		[%r{\Ahttp://azby\.search\.nifty\.com/}i, '"AzbyClub"', ['Text'], nil ],
 	],
-	'eniro' => [[%r{\Ahttp://[^/]+\.eniro\.se/}i, '"Eniro"', ['q'], DispReferrer2_Google_cache]],
 	'excite' => [[%r{\Ahttp://[^/]+\.excite\.([^/]+)/}i, '".#{$1}のExcite"', ['search', 's', 'query', 'qkw'], nil ]],
 	'biglobe' => [
 		[%r{\Ahttp://(?:[^/]+\.)?search\.biglobe\.ne\.jp/}i, '"BIGLOBEサーチ"', ['q'], nil ],

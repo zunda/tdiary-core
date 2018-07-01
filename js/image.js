@@ -3,7 +3,7 @@
 
  Copyright (C) 2011 by TADA Tadashi <t@tdtds.jp>
  Copyright (C) 2011 by hb <smallstyle@gmail.com>
- You can redistribute it and/or modify it under GPL2.
+ You can redistribute it and/or modify it under GPL2 or any later version.
  */
 
 function insertImage(text){
@@ -12,12 +12,12 @@ function insertImage(text){
 
 $(function(){
 	$('.image-img')
-	.live('hover', function(){
+	.on('hover', function(){
 		$(this).css('cursor', 'pointer');
 	}, function(){
 		$(this).css('cursor', 'default');
 	})
-	.live('click', function(){
+	.on('click', function(){
 		var idx = this.id.replace('image-index-', '');
 		var w = $('#image-info-' + idx + ' .image-width').text();
 		var h = $('#image-info-' + idx + ' .image-height').text();
@@ -107,7 +107,7 @@ $(function(){
 	};
 
 	$('#plugin-image-delimage')
-	.live('submit', function(e){
+	.on('submit', function(e){
 		e.preventDefault();
 		
 		var ids = $.map($('#image-table input[name="plugin_image_id"]:checked'), function(i){
@@ -135,15 +135,15 @@ $(function(){
 				'background': '#ddd',
 				'border': 'dashed 3px #AAA'
 			})
-			.bind('dragenter', function(){
+			.on('dragenter', function(){
 				$(this).css('border', 'solid 3px #AAA');
 				return false;
 			})
-			.bind('dragleave', function(){
+			.on('dragleave', function(){
 				$(this).css('border', 'dashed 3px #CCC');
 				return false;
 			})
-			.bind('drop', function(e){
+			.on('drop', function(e){
 				$('#plugin_image_dnd').hide();
 				$(this).css('border', 'dashed 3px #CCC');
 				$('#plugin-image-addimage form').show();
@@ -157,20 +157,20 @@ $(function(){
 
 		var dnd_timer = false;
 		$('body')
-			.bind('dragenter', function() {
+			.on('dragenter', function() {
 				if (dnd_timer) {
 					clearTimeout( dnd_timer );
 				}
 				$('#plugin-image-addimage form').hide();
 				$('#plugin_image_dnd').show();
 			})
-			.bind('dragover', function(){
+			.on('dragover', function(){
 				if (dnd_timer) {
 					clearTimeout( dnd_timer );
 				}
 				return false;
 			})
-			.bind('dragleave', function(){
+			.on('dragleave', function(){
 				dnd_timer = setTimeout(function(){
 					$('#plugin_image_dnd').hide();
 					$('#plugin-image-addimage form').show();

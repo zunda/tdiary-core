@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # comment_rank.rb
 #
 # comment_rank: ツッコミの数でランキング
@@ -8,7 +7,7 @@
 #     except:        無視する名前(いくつもある場合は,で区切って並べる)
 #
 # Copyright (c) 2002 TADA Tadashi <sho@spc.gr.jp>
-# You can distribute this file under the GPL2.
+# You can distribute this file under the GPL2 or any later version.
 #
 #
 def comment_rank( max = 5, sep = '&nbsp;', *except )

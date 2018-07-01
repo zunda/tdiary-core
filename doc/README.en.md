@@ -32,11 +32,11 @@ By plugins, you can add new features to tDiary, and change the existing feature 
 
 ### Selectable Style and IO
 
-You can choice a grammar of writing your diary by 'Style' feature. Some style files are in misc/style. And you can choice data saving format (IO) also. Seee HOWTO-make-io.rd for more information about Style or IO.
+You can choice a grammar of writing your diary by 'Style' feature. Some style files are in misc/style. And you can choice data saving format (IO) also. Seee HOWTO-make-io.html for more information about Style or IO.
 
 ### Written in Ruby
 
-Important :-). tDiary requires Ruby-1.9.2 or later.
+Important :-). tDiary requires Ruby 2.1.0 or later.
 
 ### Others
 
@@ -110,22 +110,6 @@ If you run tDiary in the environment where you can't use the suffix, ".rb", as C
 
 After you finish configuration, access "http://www.hoge.example.org/~foo/diary/". If you can see an empty page, tDiary works well. Unfortunately, if you encounter "Internal Server Error", you must change configuration. The error-log of Apache is useful in order to investigate the cause.
 
-Security
---------
-
-"tdiary.conf" has the item which change the security level. If you use tDiary on your own server, you may not care about security. But, if you lend tDiary or provide the service of web-log, you need restriction.
-
-In these cases, you set the security level in "tdiary.conf". Normally, these two lines exists at the end of "tdiary.conf".
-
-```
-@secure = false load_cgi_conf
-```
-By changing @secure, you set the security level. If this is false, no security check is carried out. If no security check is executed, users can change tDiary indulgently. When you run tDiary under the dangerous circumstance, you set @secure to true. If you do it, the dangerous operation, for example, file operation or variable assignment, is prohibited when "tdiary.conf" is loaded. The "@secure" affects plugins. If security check is carried out, you can't use some plugins.
-
-"load\_cgi\_conf" is the function which loads the tDiary's configuration file of CGI. In this example, the CGI configuration file is loaded after the security level is configured.
-
-Because you can change the positions of "load\_cgi\_conf" and @secure independently, you can do detailed configuration. If you omit @secure, @secure is set to the default value, true.
-
 run tDiary
 ----------
 
@@ -164,7 +148,7 @@ Now, All you have to do is that you write diary ( But, it is the most difficult 
 License
 -------
 
-tDiary is free software created by TADA Tadashi(sho@spc.gr.jp). tDiary is licensed under the terms of GPL2. You can distribute and modify it under the terms of GPL2.
+tDiary is free software created by TADA Tadashi(sho@spc.gr.jp). tDiary is licensed under the terms of GPL2 or any later version. You can distribute and modify it under the terms of GPL2.
 
 But, all the files that are in "erb/" directory is ERb library created by Seki-san. You can know the detail about the license of these files at http://www2a.biglobe.ne.jp/~seki/ruby/.
 

@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 #
 # search-default.rb - site search plugin sample using DefaultIO.
 #
 # Copyright (C) 2003-2005 Minero Aoki
 # Copyright (C) 2012, TADA Tadashi <t@tdtds.jp>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 #
 
@@ -73,7 +72,7 @@ module DefaultIOSearch
 
 	def foreach_data_file(data_path, &block)
 		Dir.glob("#{data_path}/[0-9]*/*.td2").sort.reverse_each do |path|
-			yield path.untaint
+			yield path
 		end
 	end
 
@@ -147,7 +146,7 @@ module DefaultIOSearch
 			raise "unkwnown format: #{ver}" unless ver == 'TDIARY2.00.00' or ver == 'TDIARY2.01.00'
 			f.each('') do |header|
 				h = {}
-				header.untaint.strip.each_line do |line|
+				header.strip.each_line do |line|
 					begin
 						n, v = *line.split(':', 2)
 					rescue ArgumentError
@@ -155,7 +154,7 @@ module DefaultIOSearch
 					end
 					h[n.strip] = v.strip
 				end
-				body = f.gets("\n.\n").chomp(".\n").untaint
+				body = f.gets("\n.\n").chomp(".\n")
 				yield h, body
 			end
 		}

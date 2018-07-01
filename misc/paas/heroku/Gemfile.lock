@@ -1,74 +1,242 @@
+GIT
+  remote: https://github.com/tdiary/tdiary-contrib.git
+  revision: 54dfbb4ac311d1b9a609533c38b751ad4e775eb1
+  specs:
+    tdiary-contrib (5.0.8)
+      pushbullet_ruby
+      tdiary
+
+GIT
+  remote: https://github.com/tdiary/tdiary-io-mongodb.git
+  revision: 3f28f1bd1315eec08c044efd89c9ae74ba8a1df1
+  specs:
+    tdiary-io-mongodb (5.0.3)
+      hikidoc
+      mongoid (~> 6.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.3.5)
-    daemons (1.1.9)
-    eventmachine (1.0.3)
-    faraday (0.9.0)
-      multipart-post (>= 1.2, < 3)
-    fastimage (1.6.0)
-      addressable (~> 2.3, >= 2.3.5)
-    hashie (2.0.5)
-    hike (1.2.3)
-    hikidoc (0.0.6)
-    jwt (0.1.11)
-      multi_json (>= 1.5)
-    multi_json (1.8.4)
-    multi_xml (0.5.5)
-    multipart-post (2.0.0)
-    oauth (0.4.7)
-    oauth2 (0.9.3)
-      faraday (>= 0.8, < 0.10)
-      jwt (~> 0.1.8)
+    activemodel (5.2.0)
+      activesupport (= 5.2.0)
+    activesupport (5.2.0)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
+    bson (4.3.0)
+    byebug (10.0.2)
+    capybara (3.2.1)
+      addressable
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      xpath (~> 3.1)
+    childprocess (0.9.0)
+      ffi (~> 1.0, >= 1.0.11)
+    coderay (1.1.2)
+    commonmarker (0.17.9)
+      ruby-enum (~> 0.5)
+    concurrent-ruby (1.0.5)
+    coveralls (0.7.2)
       multi_json (~> 1.3)
-      multi_xml (~> 0.5)
-      rack (~> 1.2)
-    omniauth (1.2.1)
-      hashie (>= 1.2, < 3)
-      rack (~> 1.0)
-    omniauth-github (1.1.1)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.1)
-    omniauth-oauth (1.0.1)
+      rest-client (= 1.6.7)
+      simplecov (>= 0.7)
+      term-ansicolor (= 1.2.2)
+      thor (= 0.18.1)
+    dalli (2.7.8)
+    debase (0.2.2)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.3)
+    diff-lcs (1.3)
+    docile (1.3.1)
+    emot (0.0.4)
+      thor
+    faraday (0.15.2)
+      multipart-post (>= 1.2, < 3)
+    fastimage (2.1.3)
+    ffi (1.9.25)
+    hashie (3.5.7)
+    hikidoc (0.1.0)
+    i18n (1.0.1)
+      concurrent-ruby (~> 1.0)
+    idn-ruby (0.1.0)
+    jasmine (2.99.0)
+      jasmine-core (>= 2.99.0, < 3.0.0)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.99.2)
+    json (2.1.0)
+    launchy (2.4.3)
+      addressable (~> 2.3)
+    mail (2.7.0)
+      mini_mime (>= 0.1.1)
+    memcachier (0.0.2)
+    method_source (0.9.0)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    mini_mime (1.0.0)
+    mini_portile2 (2.3.0)
+    minitest (5.11.3)
+    mongo (2.5.3)
+      bson (>= 4.3.0, < 5.0.0)
+    mongoid (6.4.1)
+      activemodel (>= 5.1, < 6.0.0)
+      mongo (>= 2.5.1, < 3.0.0)
+    multi_json (1.13.1)
+    multipart-post (2.0.0)
+    nokogiri (1.8.3)
+      mini_portile2 (~> 2.3.0)
+    oauth (0.5.4)
+    octokit (4.9.0)
+      sawyer (~> 0.8.0, >= 0.5.3)
+    omniauth (1.8.1)
+      hashie (>= 3.4.6, < 3.6.0)
+      rack (>= 1.6.2, < 3)
+    omniauth-oauth (1.1.0)
       oauth
       omniauth (~> 1.0)
-    omniauth-oauth2 (1.1.2)
-      faraday (>= 0.8, < 0.10)
-      multi_json (~> 1.3)
-      oauth2 (~> 0.9.3)
-      omniauth (~> 1.2)
-    omniauth-twitter (1.0.1)
-      multi_json (~> 1.3)
-      omniauth-oauth (~> 1.0)
-    pg (0.17.1)
-    rack (1.5.2)
-    rake (10.1.1)
-    sequel (4.7.0)
-    sprockets (2.11.0)
-      hike (~> 1.2)
-      multi_json (~> 1.0)
-      rack (~> 1.0)
-      tilt (~> 1.1, != 1.3.0)
-    tdiary-io-rdb (0.0.1)
-      sequel
-    thin (1.6.1)
-      daemons (>= 1.0.9)
-      eventmachine (>= 1.0.0)
-      rack (>= 1.0.0)
-    tilt (1.4.1)
+    omniauth-twitter (1.4.0)
+      omniauth-oauth (~> 1.1)
+      rack
+    phantomjs (2.1.1.0)
+    pit (0.0.7)
+    power_assert (1.1.2)
+    pry (0.11.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    pry-byebug (3.6.0)
+      byebug (~> 10.0)
+      pry (~> 0.10)
+    public_suffix (3.0.2)
+    puma (3.11.4)
+    pushbullet_ruby (1.1.4)
+      faraday (>= 0.13.0, < 1.0)
+      mime-types
+    rack (2.0.5)
+    rack-test (1.0.0)
+      rack (>= 1.0, < 3)
+    racksh (1.0.0)
+      rack (>= 1.0)
+      rack-test (>= 0.5)
+    rake (12.3.1)
+    rdtool (0.6.38)
+    redcarpet (3.4.0)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    rspec (3.7.0)
+      rspec-core (~> 3.7.0)
+      rspec-expectations (~> 3.7.0)
+      rspec-mocks (~> 3.7.0)
+    rspec-core (3.7.1)
+      rspec-support (~> 3.7.0)
+    rspec-expectations (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-mocks (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-support (3.7.1)
+    ruby-debug-ide (0.6.1)
+      rake (>= 0.8.1)
+    ruby-enum (0.7.2)
+      i18n
+    rubyzip (1.2.1)
+    sawyer (0.8.1)
+      addressable (>= 2.3.5, < 2.6)
+      faraday (~> 0.8, < 1.0)
+    selenium-webdriver (3.12.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.2)
+    sequel (5.9.0)
+    simplecov (0.16.1)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
+    sprockets (3.7.2)
+      concurrent-ruby (~> 1.0)
+      rack (> 1, < 3)
+    sqlite3 (1.3.13)
+    tdiary (5.0.8)
+      bundler (~> 1.3)
+      emot
+      fastimage
+      hikidoc
+      mail
+      rack
+      rake
+      sprockets
+      thor
+    tdiary-style-gfm (1.1.0)
+      commonmarker
+      emot
+      twitter-text (>= 2.0)
+    tdiary-style-rd (0.0.3)
+      rdtool
+    term-ansicolor (1.2.2)
+      tins (~> 0.8)
+    test-unit (3.2.8)
+      power_assert
+    thor (0.18.1)
+    thread_safe (0.3.6)
+    tins (0.13.2)
+    twitter-text (2.1.0)
+      idn-ruby
+      unf (~> 0.1.0)
+    tzinfo (1.2.5)
+      thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.5)
+    xpath (3.1.0)
+      nokogiri (~> 1.8)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  capybara
+  coveralls
+  dalli
+  debase
+  emot
   fastimage
   hikidoc
+  jasmine (< 3)
+  launchy
+  mail
+  memcachier
+  octokit
   omniauth
-  omniauth-github
   omniauth-twitter
-  pg
-  rack
+  pit
+  pry-byebug
+  puma
+  rack (~> 2.0)
+  racksh
   rake
+  redcarpet
+  rspec
+  ruby-debug-ide
+  selenium-webdriver
+  sequel
+  simplecov
   sprockets
-  tdiary-io-rdb
-  thin
+  sqlite3
+  tdiary-contrib!
+  tdiary-io-mongodb!
+  tdiary-style-gfm
+  tdiary-style-rd
+  test-unit
+
+RUBY VERSION
+   ruby 2.5.1p57
+
+BUNDLED WITH
+   1.16.1

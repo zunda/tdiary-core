@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..')).untaint
+$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
 ENV['RACK_ENV'] = "test"
 
@@ -26,10 +25,11 @@ RSpec.configure do |config|
 end
 
 class DummyTDiary
-	def conf
-		conf = DummyConf.new
-      conf.data_path = TDiary.root + "/tmp/"
-      conf
+	attr_accessor :conf
+
+	def initialize
+		@conf = DummyConf.new
+		@conf.data_path = TDiary.root + "/tmp/"
 	end
 
 	def ignore_parser_cache

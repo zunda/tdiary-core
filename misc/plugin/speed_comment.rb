@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 # speed_comment.rb
 #
 # spped_comment: 最新・月毎表示時に簡易なツッコミフォームを表示する
 #                pluginディレクトリに入れるだけで動きます。
 #
 # Copyright (c) 2002 TADA Tadashi <sho@spc.gr.jp>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 #
 =begin ChangeLog
 2003-09-24 TADA Tadashi <sho@spc.gr.jp>
@@ -20,7 +19,7 @@
 =end
 
 add_body_leave_proc do |date|
-	if /latest|month/ =~ @mode and not @cgi.mobile_agent? then
+	if /latest|month/ =~ @mode
 		@conf['speed_comment.name_size'] = 20 unless @conf['speed_comment.name_size']
 		@conf['speed_comment.body_size'] = 40 unless @conf['speed_comment.body_size']
 		r = ""

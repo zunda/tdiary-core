@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require File.expand_path('../plugin_helper', __FILE__)
 
 describe "bq plugin w/" do
@@ -15,7 +14,7 @@ describe "bq plugin w/" do
 		end
 
 		it { expect(@body_snippet).to eq(expected_html_body(
-				:src => 'foo')) }
+				src: 'foo')) }
 	end
 
 	def expected_html_body(options)

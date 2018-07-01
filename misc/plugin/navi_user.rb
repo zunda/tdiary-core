@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # navi_user.rb
 #
 # navi_user: 前日，翌日→前の日記，次の日記
@@ -7,7 +6,7 @@
 #   の日記がない場合は，ナビゲーションを表示しない．月またぎにも対応．
 #
 # Copyright (c) 2002 Junichiro KITA <kita@kitaj.no-ip.com>
-# Distributed under the GPL
+# Distributed under the GPL2 or any later version.
 
 # this plugin is obsoleted
 

@@ -39,24 +39,27 @@ htpasswd -cd .htpasswd username
 
 ### ライブラリを有効にする
 
-まず、利用する外部サービスに対応したライブラリを有効にします。Twitter認証では `omniauth-twitter` ライブラリを使用します。Gemfile.localにて以下の行が有効になっていることを確認してください。無ければ追加してください。
+利用する外部サービスに対応したライブラリを有効にします。Twitter認証では `omniauth-twitter` ライブラリを使用します。Gemfile.localにて以下の行が有効になっていることを確認してください。無ければ追加してください。
 
 ```
 gem 'omniauth'
 gem 'omniauth-twitter'
 ```
 
-次に設定ファイル `config.ru` を編集します。 ```run TDiary::Applicationn.new( base_dir )``` の前に以下の行を追加します。無ければ追加してください。
+### Twitter Appsへのアプリケーションの登録
 
-```
-require 'tdiary/application/extension/omniauth'
-```
+Twitter 認証を使うためには、Twitter のサイトにてアプリケーションを登録する必要があります。[Twitter Apps](https://dev.twitter.com/apps/new)にアクセスし、以下の情報を入力して新しいアプリケーションを登録してください。
+
+  - Name: アプリケーションの名前です。設置する日記のタイトルを設定すると分かりやすいでしょう。
+  - Description: アプリケーションの説明です。迷ったら「日記へログインするためのTwitter認証」などとすると良いでしょう。
+  - Website: アプリケーションのURLです。設置する日記のトップページを設定すると分かりやすいでしょう。
+  - Callback URL: 認証後に移動するURLです。Websiteと同じURLを設定してください。
+
+Name, Description, Websiteに設定した値は、Twitterのアプリ連携画面（認証画面）に表示されます。また、Callback URLを空欄にするとTwitter認証が動作しなくなります。任意のURLで良いので設定してください。
 
 ### 鍵とパスワードの取得と環境変数への設定
 
-Twitter 認証を使うためには、Twitter認証を利用するための鍵 (Consumer key) とパスワード (Consumer secret) としてTWITTER_KEYとTWITTER_SECRETを環境変数として設定する必要があります。これらは[Twitterのサイト](https://dev.twitter.com/apps/new)から取得できます。
-
-鍵とパスワードを取得したら環境変数に設定します。
+Twitterのサイトから鍵とパスワードを取得したら、鍵 (Consumer key) とパスワード (Consumer secret) をそれぞれ環境変数として設定します。
 
 ```
 export TWITTER_KEY="your_consumer_key"
@@ -74,3 +77,88 @@ export TWITTER_NAME='your_twitter_screen_name'
 ```
 
 日記の編集画面にアクセスすると、Twitterのログイン画面が表示されるようになります。編集画面へは `your_twitter_screen_name` で指定したアカウントのみがアクセスできます。
+
+サポートしている外部サービス認証の一覧
+----
+
+### Twitter
+
+Gemfile.localの記述
+
+```
+gem 'omniauth'
+gem 'omniauth-twitter'
+```
+
+環境変数の設定
+
+```
+export TWITTER_KEY="your_consumer_key"        # Consumer Key (API Key)
+export TWITTER_SECRET="your_consumer_secret"  # Consumer Secret (API Secret)
+export TWITTER_NAME="your_screen_name"        # アクセスを許可するアカウント名
+```
+
+KeyとSecretは [Twitter Application Management](https://apps.twitter.com/) にて取得できます。
+
+### Facebook
+
+Gemfile.localの記述
+
+```
+gem 'omniauth'
+gem 'omniauth-facebook'
+```
+
+環境変数の設定
+
+```
+export FACEBOOK_KEY="your_app_id"               # App ID
+export FACEBOOK_SECRET="your_app_secret"        # App Secret
+export FACEBOOK_EMAIL="your_email@example.com"  # アクセスを許可するアカウントのメールアドレス
+```
+
+IDとSecretは [Facebook Developers](https://developers.facebook.com/) にて取得できます。
+設定画面にてWebsiteの「Site URL」と「Mobile Site URL」には、設置する日記のアドレスを指定してください。
+
+### Google
+
+Gemfile.localの記述
+
+```
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+```
+
+環境変数の設定
+
+```
+export GOOGLE_CLIENT_ID="your_client_id"          # クライアント ID
+export GOOGLE_CLIENT_SECRET="your_client_secret"  # クライアント シークレット	
+export GOOGLE_EMAIL="your_email@gmail.com"        # アクセスを許可するアカウントのメールアドレス
+```
+
+IDとシークレットは [Google API](https://console.developers.google.com/iam-admin/projects) にて取得できます。
+設定画面にて「リダイレクトURL」には、設定する日記のアドレスの末尾に `update.rb/auth/google_oauth2/callback` を加えたものを指定してください。
+日記のアドレスが `http://diary.example.com/` の場合、リダイレクトURLは `http://diary.example.com/update.rb/auth/google_oauth2/callback` となります。
+
+また、Google Developers Consoleの「APIと認証」にて、Google+ APIのステータスをonにしてください。
+
+### GitHub
+
+Gemfile.localの記述
+
+```
+gem 'omniauth'
+gem 'omniauth-github'
+```
+
+環境変数の設定
+
+```
+export GITHUB_KEY="your_client_id"          # Cliend ID
+export GITHUB_SECRET="your_client_secret"   # Cliend Secret
+export GITHUB_NAME="your_github_nickname"   # アクセスを許可するアカウント名
+```
+
+Cliend ID と Cliend Secret は、 [New OAuth Application](https://github.com/settings/applications/new) にて取得できます。
+設定画面にて「Authorization callback URL」には、設置する日記のアドレスを指定してください。

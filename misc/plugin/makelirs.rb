@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # makelirs.rb
 #
 # 更新情報をLIRSフォーマットのファイルに吐き出す
@@ -12,7 +11,7 @@
 #   いずれも、Webサーバから書き込める権限が必要です。
 #
 # Copyright (C) 2002 by Kazuhiro NISHIYAMA
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 
 add_header_proc do

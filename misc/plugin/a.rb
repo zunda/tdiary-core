@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # a.rb
 #
 # Create anchor easily.
@@ -33,7 +32,7 @@
 #   http://ponx.s5.xrea.com/hiki/ja/a.rb.html (Japanese)
 #
 # Copyright (c) 2002-2004 MUTOH Masao <mutoh@highway.ne.jp>
-# You can redistribute it and/or modify it under GPL2.
+# You can redistribute it and/or modify it under GPL2 or any later version.
 #
 
 # Resources
@@ -148,7 +147,6 @@ def a(key, option_or_name = nil, name = nil, charset = nil)
 
 	if @options["a.tlink"]
 		if defined?(tlink)
-			url.untaint
  			result = tlink(url, value)
 		else
 			result = "tlink is not available."

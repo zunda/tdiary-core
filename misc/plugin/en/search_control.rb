@@ -17,14 +17,11 @@ only index one-day view.
 To this plugin to take effect, we have to wish that the crawlers regards
 the meta-tag.
 
-This plugin also works in a diary with @secure = true.
-
 == License
 Copyright (C) 2003, 2004 zunda <zunda at freeshell.org>
 
 Permission is granted for use, copying, modification, distribution, and
-distribution of modified versions of this work under the terms of GPL
-version 2 or later.
+distribution of modified versions of this work under the terms of GPL version 2 or later.
 =end
 
 =begin ChangeLog

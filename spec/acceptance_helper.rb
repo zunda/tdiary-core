@@ -20,7 +20,7 @@ end
 # FIXME: TDiary::Application has auth middleware in update.rb, so it cannot be tested.
 # Capybara.app = TDiary::Application.new
 
-Capybara.save_and_open_page_path = File.dirname(__FILE__) + '/../tmp/capybara'
+Capybara.save_path = File.dirname(__FILE__) + '/../tmp/capybara'
 
 RSpec.configure do |config|
 	fixture_conf = File.expand_path('../fixtures/just_installed.conf', __FILE__)
@@ -53,11 +53,9 @@ RSpec.configure do |config|
 
 	excludes = case ENV['TEST_MODE']
 				  when 'webrick'
-					  [:exclude_selenium, :exclude_no_secure]
-				  when 'secure'
-					  [:exclude_rack, :exclude_secure]
+					  [:exclude_selenium]
 				  else # rack
-					  [:exclude_rack, :exclude_no_secure]
+					  [:exclude_rack]
 				  end
 	excludes.each do |exclude|
 		config.filter_run_excluding exclude

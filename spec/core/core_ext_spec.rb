@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 require 'tdiary/core_ext'
@@ -22,30 +21,46 @@ describe "core extension library" do
 		context "emojify" do
 			before { @result = ":sushi: は美味しい".emojify }
 			it do
-				expect(@result).to eq "<img src='http://www.emoji-cheat-sheet.com/graphics/emojis/sushi.png' width='20' height='20' title='sushi' alt='sushi' class='emoji' /> は美味しい"
+				expect(@result).to eq "<img src='//www.webpagefx.com/tools/emoji-cheat-sheet/graphics/emojis/sushi.png' width='20' height='20' title='sushi' alt='sushi' class='emoji' /> は美味しい"
 			end
 		end
 
 		context "大文字でもemojify" do
 			before { @result = ":SUSHI: は美味しい".emojify }
 			it do
-				expect(@result).to eq "<img src='http://www.emoji-cheat-sheet.com/graphics/emojis/sushi.png' width='20' height='20' title='sushi' alt='sushi' class='emoji' /> は美味しい"
+				expect(@result).to eq "<img src='//www.webpagefx.com/tools/emoji-cheat-sheet/graphics/emojis/sushi.png' width='20' height='20' title='sushi' alt='sushi' class='emoji' /> は美味しい"
 			end
 		end
 
 		context "+1でもemojify" do
 			before { @result = "いいね!:+1:".emojify }
 			it do
-				expect(@result).to eq "いいね!<img src='http://www.emoji-cheat-sheet.com/graphics/emojis/plus1.png' width='20' height='20' title='plus1' alt='plus1' class='emoji' />"
+				expect(@result).to eq "いいね!<img src='//www.webpagefx.com/tools/emoji-cheat-sheet/graphics/emojis/plus1.png' width='20' height='20' title='plus1' alt='plus1' class='emoji' />"
 			end
 		end
 
-		context "文字と数字しか変換しない" do
-			before do
-				@result = ":<script type='text/javascript'></script>: は美味しい".emojify
-			end
+		context "plus1でもemojify" do
+			before { @result = "いいね!:plus1:".emojify }
 			it do
-				expect(@result).to eq ":<script type='text/javascript'></script>: は美味しい"
+				expect(@result).to eq "いいね!<img src='//www.webpagefx.com/tools/emoji-cheat-sheet/graphics/emojis/plus1.png' width='20' height='20' title='plus1' alt='plus1' class='emoji' />"
+			end
+		end
+
+		context "thumbsupでもemojify" do
+			before { @result = "いいね!:thumbsup:".emojify }
+			it do
+				expect(@result).to eq "いいね!<img src='//www.webpagefx.com/tools/emoji-cheat-sheet/graphics/emojis/thumbsup.png' width='20' height='20' title='thumbsup' alt='thumbsup' class='emoji' />"
+			end
+		end
+
+		context "絵文字に変換しない" do
+			[
+				":<script type='text/javascript'></script>: は美味しい",
+				"foo::bar::baz"
+			].each do |str|
+				describe str do
+					it { expect(str.emojify).to eq str }
+				end
 			end
 		end
 	end
