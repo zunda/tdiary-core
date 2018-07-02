@@ -13,8 +13,6 @@
 def css_tag
 	if @mode =~ /conf$/ then
 		css = "#{theme_url}/conf.css"
-	elsif @theme and @theme.length > 0 then
-		css = "#{theme_url}/#{@theme}/#{@theme}.css"
 	else
 		css = @css
 	end
