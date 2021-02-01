@@ -53,7 +53,7 @@ GEM
       sawyer (~> 0.8.0, >= 0.5.3)
     phantomjs (2.1.1.0)
     pit (0.0.7)
-    power_assert (1.2.0)
+    power_assert (2.0.0)
     public_suffix (4.0.5)
     rack (2.2.3)
     rack-test (1.1.0)
@@ -96,7 +96,7 @@ GEM
     sync (0.5.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
-    test-unit (3.3.6)
+    test-unit (3.4.0)
       power_assert
     thor (1.0.1)
     tins (1.25.0)
